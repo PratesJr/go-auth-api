@@ -1,7 +1,8 @@
 package main
 
 import (
-	"go-auth-api/cmd/router"
+	"fmt"
+	"go-auth-api/internal/application/router"
 	"net/http"
 )
 
@@ -11,6 +12,7 @@ func main() {
 	err := http.ListenAndServe(":3000", r)
 
 	if err != nil {
+		_ = fmt.Errorf("deu ruim")
 		return
 	}
 

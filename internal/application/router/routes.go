@@ -8,7 +8,6 @@ import (
 func RegisterRoutes() *chi.Mux {
 	routes := chi.NewRouter()
 	routes.Use(middleware.Logger)
-	routes.Get("/", nil)
 
 	return routes
 }
