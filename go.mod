@@ -16,6 +16,7 @@ require (
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-sqlite3 v1.14.17 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
+	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/text v0.13.0 // indirect
 	gorm.io/driver/mysql v1.5.1 // indirect
 	gorm.io/driver/postgres v1.5.7 // indirect

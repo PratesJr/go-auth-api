@@ -2,7 +2,7 @@ package database
 
 import (
 	"go-auth-api/internal/application/config"
-	"go-auth-api/internal/integration/models"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -17,7 +17,7 @@ func DbConnection() *gorm.DB {
 		panic("Failed to connect on database")
 	}
 
-	migrationErr := db.AutoMigrate(&models.User{})
+	migrationErr := db.AutoMigrate()
 
 	if migrationErr != nil {
 		panic("Failed to create tables")
