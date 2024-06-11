@@ -1,6 +1,7 @@
 package config
 
 import (
+	"go-auth-api/internal/domain/adapters"
 	"gorm.io/gorm"
 	"sync"
 )
@@ -9,7 +10,8 @@ var injectorInit sync.Once
 var injector *AppConfiguration
 
 type AppConfiguration struct {
-	db *gorm.DB
+	UserController adapters.UsersController
+	db             *gorm.DB
 }
 
 func GetInjector() *AppConfiguration {

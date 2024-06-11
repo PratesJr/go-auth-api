@@ -2,16 +2,16 @@ package config
 
 import (
 	"github.com/joho/godotenv"
-	"go-auth-api/internal/domain/interfaces"
+	"go-auth-api/internal/domain/types"
 	"os"
 )
 
-func LoadEnv() *interfaces.EnvProperties {
+func LoadEnv() *types.EnvProperties {
 	err := godotenv.Load(".env")
 	if err != nil {
 		return nil
 	}
-	return &interfaces.EnvProperties{
+	return &types.EnvProperties{
 		DatabaseHost:   os.Getenv("DATABASE_HOST"),
 		DatabaseName:   os.Getenv("DATABASE_NAME"),
 		DatabasePasswd: os.Getenv("DATABASE_PASSWD"),

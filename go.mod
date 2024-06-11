@@ -5,7 +5,10 @@ go 1.21.9
 require (
 	ariga.io/atlas-go-sdk v0.0.0-20230709063453-1058d6508503 // indirect
 	ariga.io/atlas-provider-gorm v0.1.0 // indirect
+	github.com/ajg/form v1.5.1 // indirect
 	github.com/go-chi/chi/v5 v5.0.12 // indirect
+	github.com/go-chi/cors v1.2.1 // indirect
+	github.com/go-chi/render v1.0.3 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
