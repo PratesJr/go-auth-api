@@ -3,7 +3,7 @@ LABEL authors="marceloprates"
 
 COPY changelog.yaml changelog.yaml
 COPY migrations/*.sql migrations/
-COPY Makefile Makefile
+COPY ../Makefile Makefile
 COPY liquibase.properties liquibase.properties
 
-CMD liquibase update --url"jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME} --username=${DATABASE_USER} --password=${DATABASE_PASSWD}"
+CMD liquibase update --url"${LIQUIBASE_DATABASE_URL} --username=${LIQUIBASE_DATABASE_USERNAME} --password=${LIQUIBASE_DATABASE_PASSWORD}"

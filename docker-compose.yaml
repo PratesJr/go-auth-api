@@ -2,6 +2,25 @@ version: '3'
 services:
   postgres:
     container_name: postgres_db
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWD}
+      - POSTGRES_DATABASE=${DATABASE_NAME}
+    ports:
+      - '${DATABASE_PORT}:5432'
+    volumes:
+      - go-auth-api:/var/lib/postgresql/proj/data
 
   liquibase:
     container_name: liquibase
+    build:
+      context: ./liquibase
+      dockerfile: Dockerfile
+    environment:
+      - LIQUIBASE_PROJECT_DIR=./liquibase
+      - LIQUIBASE_DATABASE_DRIVER=jdbc:postgresql://
+      - LIQUIBASE_DATABASE_URL=jdbc:postgresql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}
+      - LIQUIBASE_DATABASE_USERNAME=${DATABASE_USER}
+      - LIQUIBASE_DATABASE_PASSWORD=${DATABASE_PASSWD}
