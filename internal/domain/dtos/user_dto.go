@@ -1,12 +1,26 @@
 package dtos
 
-import "github.com/google/uuid"
+import (
+	"golang.org/x/crypto/bcrypt"
+	"time"
+)
 
-type Users struct {
-	ID   *uuid.UUID `json:"id" gorm:"type: uuid; not null; primaryKey"`
-	Name *string    `json:"name" gorm:"type: varchar(100); not null"`
+type UsersDto struct {
+	Name     string    `json:"name"`
+	Email    string    `json:"email" validate:"email"`
+	Birth    time.Time `json:"birth"`
+	Password string    `json:"password"`
 }
 
-func (Users) TableName() string {
-	return "auth_users.users"
+func newUserDto(name string, email string, birth time.Time, password string) (*UsersDto, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		return nil, err
+	}
+	return &UsersDto{
+		Name:     name,
+		Email:    email,
+		Birth:    birth,
+		Password: string(bytes),
+	}, nil
 }
