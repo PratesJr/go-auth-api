@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: v1.0.0
+      author: Prates
+      tagDatabase:
+        tag: v1.0.0
+  - include:
+    - file: ./migrations/20240613205138_create_schema.sql
+  - include:
+    - file: ./migrations/20240613205240_create_table_users.sql

@@ -1,0 +1,40 @@
+version: '3'
+services:
+  postgres_db:
+    image: postgres:14.0-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      - LC_ALL=C.UTF-8
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWD}
+    ports:
+      - '${DATABASE_PORT}:5432'
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    networks:
+      - postgres_db
+
+
+  liquibase:
+    container_name: liquibase
+    build:
+      context: ./liquibase
+      dockerfile: Dockerfile
+    environment:
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://postgres_db:${DATABASE_PORT}/${DATABASE_NAME}
+      - LIQUIBASE_COMMAND_USERNAME=${DATABASE_USER}
+      - LIQUIBASE_COMMAND_PASSWORD=${DATABASE_PASSWD}
+    depends_on:
+      - postgres_db
+    networks:
+      - postgres_db
+
+
+
+volumes:
+  postgres_db:
+    driver: local
+networks:
+    postgres_db:
+      driver: bridge
