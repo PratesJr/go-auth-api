@@ -12,7 +12,7 @@ type UsersDto struct {
 	Password string    `json:"password"`
 }
 
-func newUserDto(name string, email string, birth time.Time, password string) (*UsersDto, error) {
+func NewUserDto(name string, email string, birth time.Time, password string) (*UsersDto, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		return nil, err
