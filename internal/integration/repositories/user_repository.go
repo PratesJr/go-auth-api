@@ -6,17 +6,27 @@ import (
 )
 
 type UserRepositoryImpl struct {
-	Db *gorm.DB
+	Model models.UsersModel
+	Db    *gorm.DB
 }
 
-func (ur *UserRepositoryImpl) Insert(data models.User) error {
+func (ur *UserRepositoryImpl) Insert(data *models.UsersModel) error {
+
+	user := ur.Db.Table(ur.Model.TableName()).Create(&data)
+
+	return user.Error
 
 }
 
-func (ur *UserRepositoryImpl) Update(data models.User) error {
+func (ur *UserRepositoryImpl) Update(data *models.UsersModel) error {
+
+	user := ur.Db.Table(ur.Model.TableName()).Save(&data)
+
+	return user.Error
 
 }
 
-func (ur *UserRepositoryImpl) Select(data models.User) ([]models.User, error) {
+func (ur *UserRepositoryImpl) Select() ([]models.UsersModel, error) {
+	return nil, nil
 
 }

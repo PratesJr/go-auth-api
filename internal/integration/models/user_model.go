@@ -2,19 +2,69 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"go-auth-api/internal/domain/dtos"
+	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
 type UsersModel struct {
-	ID        *uuid.UUID `json:"id" gorm:"type: uuid; not null; primaryKey"`
-	Name      *string    `json:"name" gorm:"type: varchar(100); not null"`
-	Email     *string    `json:"email" validate:"email" gorm:"type: varchar(100); not null"`
-	Birth     *time.Time `json:"birth" gorm:"type: date; not null"`
-	Password  *string    `json:"password" gorm:"type: varchar; not null"`
-	CreatedAt *time.Time `json:"created_at" gorm:"type: timestamp; not null"`
-	UpdatedAt *time.Time `json:"updated_at" gorm:"type: timestamp; not null"`
+	ID        uuid.UUID `gorm:"type: uuid; not null; primaryKey"`
+	Name      string    `gorm:"type: varchar(100); not null"`
+	Email     string    `gorm:"type: varchar(100); not null"`
+	Birth     time.Time `gorm:"type: date; not null"`
+	Password  string    `gorm:"type: varchar; not null"`
+	CreatedAt time.Time `gorm:"type: timestamp; not null"`
+	UpdatedAt time.Time `gorm:"type: timestamp; not null"`
 }
 
 func (UsersModel) TableName() string {
 	return "auth_users.users"
+}
+
+func NewUserModel(body *dtos.UsersDto) *UsersModel {
+
+	parseDate, err := time.Parse("YYYY-MM-DD", body.Birth)
+
+	if err != nil {
+		return nil
+	}
+
+	bytes, errPassword := bcrypt.GenerateFromPassword([]byte(body.Password), 14)
+
+	if errPassword != nil {
+		return nil
+	}
+
+	return &UsersModel{
+		ID:        uuid.New(),
+		Name:      body.Name,
+		Email:     body.Email,
+		Birth:     parseDate,
+		Password:  string(bytes),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+	}
+}
+
+func UpdateUserData(dto *dtos.UsersDto, user *UsersModel) *UsersModel {
+
+	if dto.Birth != "" {
+		parseDate, err := time.Parse("YYYY-MM-DD", dto.Birth)
+
+		if err != nil {
+			return nil
+		}
+		user.Birth = parseDate
+	}
+
+	if dto.Name != "" {
+		user.Name = dto.Name
+
+	}
+
+	if dto.Email != "" {
+		user.Email = dto.Email
+	}
+
+	return user
 }
