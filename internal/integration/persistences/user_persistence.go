@@ -29,14 +29,45 @@ func (up UserPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) {
 }
 
 func (up UserPersistenceImpl) Find() (error, *[]types.User) {
-	return nil, nil
+	err, arrayUser := up.repo.Select()
+	if arrayUser != nil {
+		return err, nil
+	}
+
+	var result = make([]types.User, len(arrayUser))
+
+	for i, value := range arrayUser {
+
+		result[i] = types.User{
+			Id:        value.ID.String(),
+			Name:      value.Name,
+			Email:     value.Email,
+			CreatedAt: value.CreatedAt.String(),
+		}
+
+	}
+
+	return nil, &result
 }
 
-func (up UserPersistenceImpl) Update() (error, *types.User) {
-	err, user := up.Find()
+func (up UserPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (error, *types.User) {
+	err, user := up.repo.Select()
 
 	if err != nil {
 		return err, nil
 	}
-	return nil, nil
+
+	userToUpdate := user[0].UpdateData(data)
+
+	errUpdate := up.repo.Update(userToUpdate)
+
+	if errUpdate != nil {
+		return errUpdate, nil
+	}
+	return nil, &types.User{
+		Id:        userToUpdate.ID.String(),
+		Name:      userToUpdate.Name,
+		Email:     userToUpdate.Email,
+		CreatedAt: userToUpdate.CreatedAt.String(),
+	}
 }

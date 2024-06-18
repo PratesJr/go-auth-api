@@ -26,7 +26,7 @@ func (ur *UserRepositoryImpl) Update(data *models.UsersModel) error {
 
 }
 
-func (ur *UserRepositoryImpl) Select() ([]models.UsersModel, error) {
+func (ur *UserRepositoryImpl) Select() (error, []models.UsersModel) {
 	return nil, nil
 
 }

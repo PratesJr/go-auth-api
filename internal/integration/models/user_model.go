@@ -23,13 +23,13 @@ func (UsersModel) TableName() string {
 
 func NewUserModel(body *dtos.UsersDto) *UsersModel {
 
-	parseDate, err := time.Parse("YYYY-MM-DD", body.Birth)
+	parseDate, err := time.Parse("YYYY-MM-DD", *body.Birth)
 
 	if err != nil {
 		return nil
 	}
 
-	bytes, errPassword := bcrypt.GenerateFromPassword([]byte(body.Password), 14)
+	bytes, errPassword := bcrypt.GenerateFromPassword([]byte(*body.Password), 14)
 
 	if errPassword != nil {
 		return nil
@@ -37,8 +37,8 @@ func NewUserModel(body *dtos.UsersDto) *UsersModel {
 
 	return &UsersModel{
 		ID:        uuid.New(),
-		Name:      body.Name,
-		Email:     body.Email,
+		Name:      *body.Name,
+		Email:     *body.Email,
 		Birth:     parseDate,
 		Password:  string(bytes),
 		CreatedAt: time.Now().UTC(),
@@ -46,10 +46,10 @@ func NewUserModel(body *dtos.UsersDto) *UsersModel {
 	}
 }
 
-func UpdateUserData(dto *dtos.UsersDto, user *UsersModel) *UsersModel {
+func UpdateUserData(dto *dtos.UpdateUserDto, user *UsersModel) *UsersModel {
 
-	if dto.Birth != "" {
-		parseDate, err := time.Parse("YYYY-MM-DD", dto.Birth)
+	if dto.Birth != nil {
+		parseDate, err := time.Parse("YYYY-MM-DD", *dto.Birth)
 
 		if err != nil {
 			return nil
@@ -57,14 +57,41 @@ func UpdateUserData(dto *dtos.UsersDto, user *UsersModel) *UsersModel {
 		user.Birth = parseDate
 	}
 
-	if dto.Name != "" {
-		user.Name = dto.Name
+	if dto.Name != nil {
+		user.Name = *dto.Name
 
 	}
 
-	if dto.Email != "" {
-		user.Email = dto.Email
+	if dto.Email != nil {
+		user.Email = *dto.Email
 	}
+
+	user.UpdatedAt = time.Now().UTC()
+
+	return user
+}
+
+func (user *UsersModel) UpdateData(dto *dtos.UpdateUserDto) *UsersModel {
+
+	if dto.Birth != nil {
+		parseDate, err := time.Parse("YYYY-MM-DD", *dto.Birth)
+
+		if err != nil {
+			return nil
+		}
+		user.Birth = parseDate
+	}
+
+	if dto.Name != nil {
+		user.Name = *dto.Name
+
+	}
+
+	if dto.Email != nil {
+		user.Email = *dto.Email
+	}
+
+	user.UpdatedAt = time.Now().UTC()
 
 	return user
 }

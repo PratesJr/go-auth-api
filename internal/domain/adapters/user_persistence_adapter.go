@@ -8,5 +8,5 @@ import (
 type UserPersistence interface {
 	Create(data *dtos.UsersDto) (error, *types.User)
 	Find() (error, *[]types.User)
-	Update(data *dtos.UsersDto) (error, *types.User)
+	Update(data *dtos.UpdateUserDto, id string) (error, *types.User)
 }
