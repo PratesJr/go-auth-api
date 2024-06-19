@@ -2,8 +2,12 @@ package controllers
 
 import "go-auth-api/internal/domain/adapters"
 
-type userController struct{}
+type userController struct {
+	useCase adapters.UserUseCase
+}
 
-func UserController() adapters.UsersController {
-	return &userController{}
+func UserControllerConstructor(useCase adapters.UserUseCase) adapters.UsersController {
+	return &userController{
+		useCase: useCase,
+	}
 }

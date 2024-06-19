@@ -71,7 +71,7 @@ func UpdateUserData(dto *dtos.UpdateUserDto, user *UsersModel) *UsersModel {
 	return user
 }
 
-func (user *UsersModel) UpdateData(dto *dtos.UpdateUserDto) *UsersModel {
+func (user UsersModel) UpdateData(dto *dtos.UpdateUserDto) *UsersModel {
 
 	if dto.Birth != nil {
 		parseDate, err := time.Parse("YYYY-MM-DD", *dto.Birth)
@@ -93,5 +93,5 @@ func (user *UsersModel) UpdateData(dto *dtos.UpdateUserDto) *UsersModel {
 
 	user.UpdatedAt = time.Now().UTC()
 
-	return user
+	return &user
 }

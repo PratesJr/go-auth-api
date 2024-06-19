@@ -1,32 +1,39 @@
 package repositories
 
 import (
+	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/integration/models"
 	"gorm.io/gorm"
 )
 
-type UserRepositoryImpl struct {
-	Model models.UsersModel
-	Db    *gorm.DB
+type userRepositoryImpl struct {
+	model *models.UsersModel
+	db    *gorm.DB
 }
 
-func (ur *UserRepositoryImpl) Insert(data *models.UsersModel) error {
+func UserRepositoryConstructor(database *gorm.DB, model *models.UsersModel) adapters.UserRepository {
+	return &userRepositoryImpl{
+		model: model,
+		db:    database,
+	}
+}
+func (ur userRepositoryImpl) Insert(data *models.UsersModel) error {
 
-	user := ur.Db.Table(ur.Model.TableName()).Create(&data)
+	user := ur.db.Table(ur.model.TableName()).Create(&data)
 
 	return user.Error
 
 }
 
-func (ur *UserRepositoryImpl) Update(data *models.UsersModel) error {
+func (ur userRepositoryImpl) Update(data *models.UsersModel) error {
 
-	user := ur.Db.Table(ur.Model.TableName()).Save(&data)
+	user := ur.db.Table(ur.model.TableName()).Save(&data)
 
 	return user.Error
 
 }
 
-func (ur *UserRepositoryImpl) Select() (error, []models.UsersModel) {
+func (ur userRepositoryImpl) Select() (error, []models.UsersModel) {
 	return nil, nil
 
 }

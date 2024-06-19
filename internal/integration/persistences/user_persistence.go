@@ -7,11 +7,17 @@ import (
 	"go-auth-api/internal/integration/models"
 )
 
-type UserPersistenceImpl struct {
+type userPersistenceImpl struct {
 	repo adapters.UserRepository
 }
 
-func (up UserPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) {
+func UserPersistenceConstructor(repository adapters.UserRepository) adapters.UserPersistence {
+	return &userPersistenceImpl{
+		repo: repository,
+	}
+}
+
+func (up userPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) {
 	dataToPersist := models.NewUserModel(data)
 
 	err := up.repo.Insert(dataToPersist)
@@ -28,7 +34,7 @@ func (up UserPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) {
 	}
 }
 
-func (up UserPersistenceImpl) Find() (error, *[]types.User) {
+func (up userPersistenceImpl) Find() (error, *[]types.User) {
 	err, arrayUser := up.repo.Select()
 	if arrayUser != nil {
 		return err, nil
@@ -50,7 +56,7 @@ func (up UserPersistenceImpl) Find() (error, *[]types.User) {
 	return nil, &result
 }
 
-func (up UserPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (error, *types.User) {
+func (up userPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (error, *types.User) {
 	err, user := up.repo.Select()
 
 	if err != nil {
