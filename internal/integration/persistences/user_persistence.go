@@ -5,6 +5,7 @@ import (
 	"go-auth-api/internal/domain/dtos"
 	"go-auth-api/internal/domain/types"
 	"go-auth-api/internal/integration/models"
+	"go-auth-api/internal/utils"
 )
 
 type userPersistenceImpl struct {
@@ -17,7 +18,7 @@ func UserPersistenceConstructor(repository adapters.UserRepository) adapters.Use
 	}
 }
 
-func (up userPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) {
+func (up *userPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) {
 	dataToPersist := models.NewUserModel(data)
 
 	err := up.repo.Insert(dataToPersist)
@@ -27,14 +28,14 @@ func (up userPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) {
 	}
 
 	return nil, &types.User{
-		Id:        dataToPersist.ID.String(),
-		Name:      dataToPersist.Name,
-		Email:     dataToPersist.Email,
-		CreatedAt: dataToPersist.CreatedAt.String(),
+		Id:        utils.Toptr(dataToPersist.ID.String()),
+		Name:      &dataToPersist.Name,
+		Email:     &dataToPersist.Email,
+		CreatedAt: utils.Toptr(dataToPersist.CreatedAt.String()),
 	}
 }
 
-func (up userPersistenceImpl) Find() (error, *[]types.User) {
+func (up *userPersistenceImpl) Find() (error, *[]types.User) {
 	err, arrayUser := up.repo.Select()
 	if arrayUser != nil {
 		return err, nil
@@ -45,10 +46,10 @@ func (up userPersistenceImpl) Find() (error, *[]types.User) {
 	for i, value := range arrayUser {
 
 		result[i] = types.User{
-			Id:        value.ID.String(),
-			Name:      value.Name,
-			Email:     value.Email,
-			CreatedAt: value.CreatedAt.String(),
+			Id:        utils.Toptr(value.ID.String()),
+			Name:      &value.Name,
+			Email:     &value.Email,
+			CreatedAt: utils.Toptr(value.CreatedAt.String()),
 		}
 
 	}
@@ -56,7 +57,7 @@ func (up userPersistenceImpl) Find() (error, *[]types.User) {
 	return nil, &result
 }
 
-func (up userPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (error, *types.User) {
+func (up *userPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (error, *types.User) {
 	err, user := up.repo.Select()
 
 	if err != nil {
@@ -71,9 +72,9 @@ func (up userPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (error
 		return errUpdate, nil
 	}
 	return nil, &types.User{
-		Id:        userToUpdate.ID.String(),
-		Name:      userToUpdate.Name,
-		Email:     userToUpdate.Email,
-		CreatedAt: userToUpdate.CreatedAt.String(),
+		Id:        utils.Toptr(userToUpdate.ID.String()),
+		Name:      &userToUpdate.Name,
+		Email:     &userToUpdate.Email,
+		CreatedAt: utils.Toptr(userToUpdate.CreatedAt.String()),
 	}
 }

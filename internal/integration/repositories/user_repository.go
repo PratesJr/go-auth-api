@@ -17,7 +17,7 @@ func UserRepositoryConstructor(database *gorm.DB, model *models.UsersModel) adap
 		db:    database,
 	}
 }
-func (ur userRepositoryImpl) Insert(data *models.UsersModel) error {
+func (ur *userRepositoryImpl) Insert(data *models.UsersModel) error {
 
 	user := ur.db.Table(ur.model.TableName()).Create(&data)
 
@@ -25,7 +25,7 @@ func (ur userRepositoryImpl) Insert(data *models.UsersModel) error {
 
 }
 
-func (ur userRepositoryImpl) Update(data *models.UsersModel) error {
+func (ur *userRepositoryImpl) Update(data *models.UsersModel) error {
 
 	user := ur.db.Table(ur.model.TableName()).Save(&data)
 
@@ -33,7 +33,7 @@ func (ur userRepositoryImpl) Update(data *models.UsersModel) error {
 
 }
 
-func (ur userRepositoryImpl) Select() (error, []models.UsersModel) {
+func (ur *userRepositoryImpl) Select() (error, []models.UsersModel) {
 	return nil, nil
 
 }
