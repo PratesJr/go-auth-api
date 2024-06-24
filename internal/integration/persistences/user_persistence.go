@@ -28,10 +28,10 @@ func (up *userPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) 
 	}
 
 	return nil, &types.User{
-		Id:        utils.Toptr(dataToPersist.ID.String()),
+		Id:        utils.ToPointer(dataToPersist.ID.String()),
 		Name:      &dataToPersist.Name,
 		Email:     &dataToPersist.Email,
-		CreatedAt: utils.Toptr(dataToPersist.CreatedAt.String()),
+		CreatedAt: utils.ToPointer(dataToPersist.CreatedAt.String()),
 	}
 }
 
@@ -46,10 +46,10 @@ func (up *userPersistenceImpl) Find() (error, *[]types.User) {
 	for i, value := range arrayUser {
 
 		result[i] = types.User{
-			Id:        utils.Toptr(value.ID.String()),
+			Id:        utils.ToPointer(value.ID.String()),
 			Name:      &value.Name,
 			Email:     &value.Email,
-			CreatedAt: utils.Toptr(value.CreatedAt.String()),
+			CreatedAt: utils.ToPointer(value.CreatedAt.String()),
 		}
 
 	}
@@ -72,9 +72,9 @@ func (up *userPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (erro
 		return errUpdate, nil
 	}
 	return nil, &types.User{
-		Id:        utils.Toptr(userToUpdate.ID.String()),
+		Id:        utils.ToPointer(userToUpdate.ID.String()),
 		Name:      &userToUpdate.Name,
 		Email:     &userToUpdate.Email,
-		CreatedAt: utils.Toptr(userToUpdate.CreatedAt.String()),
+		CreatedAt: utils.ToPointer(userToUpdate.CreatedAt.String()),
 	}
 }

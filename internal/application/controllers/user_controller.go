@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
@@ -30,6 +29,8 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Status(r, 400)
+		render.JSON(rw, r, map[string]string{})
+
 		return
 	}
 
@@ -37,6 +38,8 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Status(r, 400)
+		render.JSON(rw, r, map[string]string{})
+
 		return
 	}
 
@@ -44,16 +47,20 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Status(r, 500)
+		render.JSON(rw, r, map[string]string{})
+
 		return
 	}
 
-	response, err := json.Marshal(result)
-
 	if err != nil {
 		render.Status(r, 500)
-	}
+		render.JSON(rw, r, map[string]string{})
 
-	render.JSON(rw, r, response)
+		return
+	}
+	render.Status(r, 201)
+
+	render.JSON(rw, r, result)
 }
 
 func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
@@ -65,6 +72,8 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Status(r, 400)
+		render.JSON(rw, r, map[string]string{})
+
 		return
 	}
 
@@ -72,6 +81,8 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Status(r, 400)
+		render.JSON(rw, r, map[string]string{})
+
 		return
 	}
 
@@ -81,6 +92,8 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Status(r, 400)
+		render.JSON(rw, r, map[string]string{})
+
 		return
 	}
 
@@ -88,11 +101,26 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Status(r, 500)
+		render.JSON(rw, r, map[string]string{})
 		return
 	}
 
-	response, err := json.Marshal(result)
-
-	render.JSON(rw, r, response)
+	render.Status(r, 200)
+	render.JSON(rw, r, result)
 }
-func (c *userController) FindUser(rw http.ResponseWriter, r *http.Request) {}
+func (c *userController) FindUser(rw http.ResponseWriter, r *http.Request) {
+	var err error
+	var query dtos.QueryParams
+
+	query.BuildQuery(r.URL.Query())
+
+	err = validators.Validate(query)
+
+	if err != nil {
+		render.Status(r, 400)
+		render.JSON(rw, r, map[string]string{})
+
+		return
+	}
+
+}

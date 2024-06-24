@@ -25,6 +25,6 @@ func (uc *userUseCaseImpl) Update(data *dtos.UpdateUserDto, id uuid.UUID) (error
 	return nil, nil
 }
 
-func (uc *userUseCaseImpl) Find() (error, *[]types.User) {
+func (uc *userUseCaseImpl) Find(params dtos.QueryParams) (error, *[]types.User) {
 	return nil, nil
 }

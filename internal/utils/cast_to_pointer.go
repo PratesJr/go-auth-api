@@ -1,3 +1,3 @@
 package utils
 
-func Toptr(s string) *string { return &s }
+func ToPointer[T interface{}](s T) *T { return &s }

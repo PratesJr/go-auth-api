@@ -9,5 +9,5 @@ import (
 type UserUseCase interface {
 	Create(user *dtos.UsersDto) (error, *types.User)
 	Update(data *dtos.UpdateUserDto, id uuid.UUID) (error, *types.User)
-	Find() (error, *[]types.User)
+	Find(params dtos.QueryParams) (error, *[]types.User)
 }
