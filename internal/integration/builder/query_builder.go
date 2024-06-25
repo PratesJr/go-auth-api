@@ -30,14 +30,11 @@ func BuildGormQuery(params dtos.QueryParams) []func(db *gorm.DB) *gorm.DB {
 	return query
 }
 
-func BuildGormPagination(params dtos.QueryParams) []func(db *gorm.DB) *gorm.DB {
-	var pagination []func(db *gorm.DB) *gorm.DB
-
-	if params.Limit != nil {
-		pagination = append(pagination, func(db *gorm.DB) *gorm.DB {
-			return db.Limit(*params.Limit)
-		})
+func BuildGormPagination(params dtos.QueryParams) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.
+			Offset((*params.Page - 1) * *params.Limit).
+			Limit(*params.Limit).
+			Order(*params.OrderBy)
 	}
-
-	return pagination
 }

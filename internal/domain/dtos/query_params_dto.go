@@ -54,7 +54,11 @@ func (q *QueryParams) BuildQuery(urlQuery url.Values) *QueryParams {
 		if !strings.Contains(urlQuery.Get("order"), "-") {
 			q.OrderBy = utils.ToPointer(urlQuery.Get("order") + " " + "DESC")
 		}
+
+		return q
 	}
+
+	q.OrderBy = utils.ToPointer("created_at DESC")
 
 	return q
 }
