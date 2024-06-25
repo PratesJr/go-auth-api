@@ -62,7 +62,15 @@ func (up *userPersistenceImpl) Find(params dtos.QueryParams) (error, *[]types.Us
 }
 
 func (up *userPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (error, *types.User) {
-	err, user := up.repo.Select()
+
+	querySelect := dtos.QueryParams{
+		Id:    &id,
+		Limit: utils.ToPointer(1),
+	}
+
+	query := builder.BuildGormQuery(querySelect)
+
+	err, user := up.repo.Select(query)
 
 	if err != nil {
 		return err, nil
@@ -75,6 +83,7 @@ func (up *userPersistenceImpl) Update(data *dtos.UpdateUserDto, id string) (erro
 	if errUpdate != nil {
 		return errUpdate, nil
 	}
+
 	return nil, &types.User{
 		Id:        utils.ToPointer(userToUpdate.ID.String()),
 		Name:      &userToUpdate.Name,
