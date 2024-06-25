@@ -1,6 +1,7 @@
 package use_cases
 
 import (
+	"context"
 	"github.com/google/uuid"
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
@@ -17,14 +18,14 @@ func UserUseCaseConstructor(userPersistence adapters.UserPersistence) adapters.U
 	}
 }
 
-func (uc *userUseCaseImpl) Create(user *dtos.UsersDto) (error, *types.User) {
+func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (error, *types.User) {
 	return nil, nil
 }
 
-func (uc *userUseCaseImpl) Update(data *dtos.UpdateUserDto, id uuid.UUID) (error, *types.User) {
+func (uc *userUseCaseImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (error, *types.User) {
 	return nil, nil
 }
 
-func (uc *userUseCaseImpl) Find(params dtos.QueryParams) (error, *[]types.User) {
+func (uc *userUseCaseImpl) Find(ctx context.Context, params dtos.QueryParams) (error, *[]types.User) {
 	return nil, nil
 }
