@@ -1,13 +1,14 @@
 package adapters
 
 import (
+	"context"
+	"go-auth-api/internal/domain/dtos"
 	"go-auth-api/internal/integration/models"
-	"gorm.io/gorm"
 )
 
 type UserRepository interface {
-	Insert(data *models.UsersModel) error
-	Update(data *models.UsersModel) error
-	Select(query []func(db *gorm.DB) *gorm.DB) (error, []models.UsersModel)
-	Count(query []func(db *gorm.DB) *gorm.DB) (error, *int64)
+	Insert(ctx context.Context, data models.UsersModel) error
+	Update(ctx context.Context, data models.UsersModel) error
+	Select(ctx context.Context, queryParams dtos.QueryParams) (error, *[]models.UsersModel)
+	Count(ctx context.Context, queryParams dtos.QueryParams) (error, *int64)
 }

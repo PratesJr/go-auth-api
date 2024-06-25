@@ -1,7 +1,10 @@
 package repositories
 
 import (
+	"context"
 	"go-auth-api/internal/domain/adapters"
+	"go-auth-api/internal/domain/dtos"
+	"go-auth-api/internal/integration/builder"
 	"go-auth-api/internal/integration/models"
 	"gorm.io/gorm"
 )
@@ -17,38 +20,42 @@ func UserRepositoryConstructor(database *gorm.DB, model *models.UsersModel) adap
 		db:    database,
 	}
 }
-func (ur *userRepositoryImpl) Insert(data *models.UsersModel) error {
+func (ur *userRepositoryImpl) Insert(ctx context.Context, data models.UsersModel) error {
 
-	user := ur.db.Table(ur.model.TableName()).Create(&data)
-
-	return user.Error
-
-}
-
-func (ur *userRepositoryImpl) Update(data *models.UsersModel) error {
-
-	user := ur.db.Table(ur.model.TableName()).Save(&data)
+	user := ur.db.WithContext(ctx).Model(&ur.model).Create(&data)
 
 	return user.Error
 
 }
 
-func (ur *userRepositoryImpl) Select(query []func(db *gorm.DB) *gorm.DB) (error, []models.UsersModel) {
+func (ur *userRepositoryImpl) Update(ctx context.Context, data models.UsersModel) error {
+
+	user := ur.db.WithContext(ctx).Model(&ur.model).Save(&data)
+
+	return user.Error
+
+}
+func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.QueryParams) (error, *[]models.UsersModel) {
 	var users []models.UsersModel
 
-	err := ur.db.Table(ur.model.TableName()).Scopes(query...).Find(&users)
+	query := builder.BuildGormQuery(queryParams)
+
+	pagination := builder.BuildGormPagination(queryParams)
+
+	err := ur.db.WithContext(ctx).Model(&ur.model).Scopes(query...).Scopes(pagination).Find(&users)
 
 	if err != nil {
 		return err.Error, nil
 	}
-	return nil, users
+	return nil, &users
 
 }
-
-func (ur *userRepositoryImpl) Count(query []func(db *gorm.DB) *gorm.DB) (error, *int64) {
+func (ur *userRepositoryImpl) Count(ctx context.Context, queryParams dtos.QueryParams) (error, *int64) {
 	var count *int64
 
-	ur.db.Table(ur.model.TableName()).Scopes(query...).Count(count)
+	query := builder.BuildGormQuery(queryParams)
+
+	ur.db.WithContext(ctx).Model(&ur.model).Scopes(query...).Count(count)
 
 	return nil, count
 }
