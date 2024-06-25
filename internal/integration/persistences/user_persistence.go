@@ -4,6 +4,7 @@ import (
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
 	"go-auth-api/internal/domain/types"
+	"go-auth-api/internal/integration/builder"
 	"go-auth-api/internal/integration/models"
 	"go-auth-api/internal/utils"
 )
@@ -35,8 +36,11 @@ func (up *userPersistenceImpl) Create(data *dtos.UsersDto) (error, *types.User) 
 	}
 }
 
-func (up *userPersistenceImpl) Find() (error, *[]types.User) {
-	err, arrayUser := up.repo.Select()
+func (up *userPersistenceImpl) Find(params dtos.QueryParams) (error, *[]types.User) {
+
+	query := builder.BuildGormQuery(params)
+
+	err, arrayUser := up.repo.Select(query)
 	if arrayUser != nil {
 		return err, nil
 	}
