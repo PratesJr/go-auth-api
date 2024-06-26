@@ -12,7 +12,6 @@ import (
 
 func Application(userController adapters.UsersController) *chi.Mux {
 	router := chi.NewRouter()
-	fmt.Println("Server Started...")
 
 	router.Use(
 		render.SetContentType(render.ContentTypeJSON),
@@ -26,6 +25,8 @@ func Application(userController adapters.UsersController) *chi.Mux {
 	router.Route("/auth-api", func(r chi.Router) {
 		r.Mount("/user/v1", userRouter.SetupUserRoutes(userController, nil))
 	})
+
+	fmt.Println("Server Started...")
 
 	return router
 }

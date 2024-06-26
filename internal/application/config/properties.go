@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/joho/godotenv"
 	"go-auth-api/internal/domain/types"
+	"go-auth-api/internal/utils"
 	"os"
 )
 
@@ -12,11 +13,11 @@ func LoadEnv() *types.EnvProperties {
 		return nil
 	}
 	return &types.EnvProperties{
-		DatabaseHost:   os.Getenv("DATABASE_HOST"),
-		DatabaseName:   os.Getenv("DATABASE_NAME"),
-		DatabasePasswd: os.Getenv("DATABASE_PASSWD"),
-		DatabaseUser:   os.Getenv("DATABASE_USER"),
-		DatabasePort:   os.Getenv("DATABASE_PORT"),
+		DatabaseHost:   utils.ToPointer(os.Getenv("DATABASE_HOST")),
+		DatabaseName:   utils.ToPointer(os.Getenv("DATABASE_NAME")),
+		DatabasePasswd: utils.ToPointer(os.Getenv("DATABASE_PASSWD")),
+		DatabaseUser:   utils.ToPointer(os.Getenv("DATABASE_USER")),
+		DatabasePort:   utils.ToPointer(os.Getenv("DATABASE_PORT")),
 	}
 
 }

@@ -9,7 +9,7 @@ import (
 
 func DbConnection() *gorm.DB {
 	properties := config.LoadEnv()
-	dns := "host=" + properties.DatabaseHost + " user=" + properties.DatabaseUser + " password=" + properties.DatabasePasswd + " dbname=" + properties.DatabaseName + " port=" + properties.DatabasePort
+	dns := "host=" + *properties.DatabaseHost + " user=" + *properties.DatabaseUser + " password=" + *properties.DatabasePasswd + " dbname=" + *properties.DatabaseName + " port=" + *properties.DatabasePort
 
 	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 
