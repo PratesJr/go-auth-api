@@ -10,11 +10,11 @@ import (
 )
 
 type userRepositoryImpl struct {
-	model *models.UsersModel
-	db    *gorm.DB
+	model models.UsersModel
+	db    gorm.DB
 }
 
-func UserRepositoryConstructor(database *gorm.DB, model *models.UsersModel) adapters.UserRepository {
+func UserRepositoryConstructor(database gorm.DB, model models.UsersModel) adapters.UserRepository {
 	return &userRepositoryImpl{
 		model: model,
 		db:    database,

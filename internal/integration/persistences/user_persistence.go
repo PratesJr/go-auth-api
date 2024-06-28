@@ -13,9 +13,9 @@ type userPersistenceImpl struct {
 	repo adapters.UserRepository
 }
 
-func UserPersistenceConstructor(repository *adapters.UserRepository) adapters.UserPersistence {
+func UserPersistenceConstructor(repository adapters.UserRepository) adapters.UserPersistence {
 	return &userPersistenceImpl{
-		repo: *repository,
+		repo: repository,
 	}
 }
 

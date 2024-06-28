@@ -21,7 +21,7 @@ func UserControllerConstructor(useCase adapters.UserUseCase) adapters.UsersContr
 }
 
 func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
-
+	ctx := r.Context()
 	var payload dtos.UsersDto
 	var err error
 
@@ -43,7 +43,7 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err, result := c.useCase.Create(&payload)
+	err, result := c.useCase.Create(ctx, &payload)
 
 	if err != nil {
 		render.Status(r, 500)
@@ -64,7 +64,7 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
-
+	ctx := r.Context()
 	var payload dtos.UpdateUserDto
 	var err error
 
@@ -97,7 +97,7 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err, result := c.useCase.Update(&payload, parsedUuid)
+	err, result := c.useCase.Update(ctx, &payload, parsedUuid)
 
 	if err != nil {
 		render.Status(r, 500)
