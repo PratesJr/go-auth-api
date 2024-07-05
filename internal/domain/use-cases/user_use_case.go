@@ -19,7 +19,13 @@ func UserUseCaseConstructor(userPersistence adapters.UserPersistence) adapters.U
 }
 
 func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (error, *types.User) {
-	return nil, nil
+	var err error
+	err, createdUser := uc.userPersistence.Create(ctx, user)
+
+	if err != nil {
+		return err, nil
+	}
+	return nil, createdUser
 }
 
 func (uc *userUseCaseImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (error, *types.User) {
