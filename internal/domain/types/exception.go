@@ -1,4 +1,4 @@
-package dtos
+package types
 
 import "go-auth-api/internal/domain/enums"
 

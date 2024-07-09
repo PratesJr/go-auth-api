@@ -1,12 +1,15 @@
 package controllers
 
 import (
+	"context"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
+	"go-auth-api/internal/application/parsers"
 	"go-auth-api/internal/application/validators"
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
+	"go-auth-api/internal/domain/types"
 	"net/http"
 )
 
@@ -22,42 +25,41 @@ func UserControllerConstructor(useCase adapters.UserUseCase) adapters.UsersContr
 
 func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
+
 	var payload dtos.UsersDto
-	var err error
 
-	err = render.DecodeJSON(r.Body, &payload)
+	err := render.DecodeJSON(r.Body, &payload)
 
 	if err != nil {
+
 		render.Status(r, 400)
 		render.JSON(rw, r, map[string]string{})
 
 		return
 	}
 
-	err = validators.Validate(payload)
+	errValidation := validators.Validate(payload)
 
-	if err != nil {
+	if errValidation != nil {
 		render.Status(r, 400)
 		render.JSON(rw, r, map[string]string{})
 
 		return
 	}
 
-	err, result := c.useCase.Create(ctx, &payload)
+	errBusiness, result := c.useCase.Create(ctx, &payload)
 
-	if err != nil {
-		render.Status(r, 500)
-		render.JSON(rw, r, map[string]string{})
+	if errBusiness != nil {
 
-		return
-	}
+		errResponse, statusCode := parsers.HttpErrorParser(nil, ctx, nil)
 
-	if err != nil {
-		render.Status(r, 500)
-		render.JSON(rw, r, map[string]string{})
+		render.Status(r, int(*statusCode))
+		render.JSON(rw, r, map[string]types.HttpException{"error": *errResponse})
 
 		return
 	}
+
 	render.Status(r, 201)
 
 	render.JSON(rw, r, result)
@@ -65,6 +67,8 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 
 func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
+
 	var payload dtos.UpdateUserDto
 	var err error
 
@@ -109,6 +113,9 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 	render.JSON(rw, r, result)
 }
 func (c *userController) FindUser(rw http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
+
 	var err error
 	var query dtos.QueryParams
 

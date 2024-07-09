@@ -5,6 +5,7 @@ import (
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
 	"go-auth-api/internal/domain/exceptions"
+	"go-auth-api/internal/domain/types"
 	"go-auth-api/internal/integration/builder"
 	"go-auth-api/internal/integration/models"
 	"gorm.io/gorm"
@@ -21,7 +22,7 @@ func UserRepositoryConstructor(database gorm.DB, model models.UsersModel) adapte
 		db:    database,
 	}
 }
-func (ur *userRepositoryImpl) Insert(ctx context.Context, data models.UsersModel) *dtos.Exception {
+func (ur *userRepositoryImpl) Insert(ctx context.Context, data models.UsersModel) *types.Exception {
 
 	err := ur.db.WithContext(ctx).Model(&ur.model).Create(&data)
 
@@ -37,7 +38,7 @@ func (ur *userRepositoryImpl) Insert(ctx context.Context, data models.UsersModel
 
 }
 
-func (ur *userRepositoryImpl) Update(ctx context.Context, data models.UsersModel) *dtos.Exception {
+func (ur *userRepositoryImpl) Update(ctx context.Context, data models.UsersModel) *types.Exception {
 
 	err := ur.db.WithContext(ctx).Model(&ur.model).Save(&data)
 
@@ -52,7 +53,7 @@ func (ur *userRepositoryImpl) Update(ctx context.Context, data models.UsersModel
 	return nil
 
 }
-func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.QueryParams) (*dtos.Exception, *[]models.UsersModel) {
+func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.QueryParams) (*types.Exception, *[]models.UsersModel) {
 	var users []models.UsersModel
 
 	query := builder.BuildGormQuery(queryParams)
@@ -71,7 +72,7 @@ func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.Query
 	return nil, &users
 
 }
-func (ur *userRepositoryImpl) Count(ctx context.Context, queryParams dtos.QueryParams) (*dtos.Exception, *int64) {
+func (ur *userRepositoryImpl) Count(ctx context.Context, queryParams dtos.QueryParams) (*types.Exception, *int64) {
 	var count *int64
 
 	query := builder.BuildGormQuery(queryParams)
