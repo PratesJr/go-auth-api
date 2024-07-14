@@ -62,7 +62,7 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 
 	render.Status(r, 201)
 
-	render.JSON(rw, r, result)
+	render.JSON(rw, r, map[string]types.User{"data": *result})
 }
 
 func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
@@ -70,20 +70,19 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
 
 	var payload dtos.UpdateUserDto
-	var err error
 
-	err = render.DecodeJSON(r.Body, &payload)
+	errDecode := render.DecodeJSON(r.Body, &payload)
 
-	if err != nil {
+	if errDecode != nil {
 		render.Status(r, 400)
 		render.JSON(rw, r, map[string]string{})
 
 		return
 	}
 
-	err = validators.Validate(payload)
+	errValidator := validators.Validate(payload)
 
-	if err != nil {
+	if errValidator != nil {
 		render.Status(r, 400)
 		render.JSON(rw, r, map[string]string{})
 
@@ -92,9 +91,9 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
-	parsedUuid, err := uuid.Parse(id)
+	parsedUuid, errUuid := uuid.Parse(id)
 
-	if err != nil {
+	if errUuid != nil {
 		render.Status(r, 400)
 		render.JSON(rw, r, map[string]string{})
 

@@ -18,8 +18,8 @@ func UserUseCaseConstructor(userPersistence adapters.UserPersistence) adapters.U
 	}
 }
 
-func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (error, *types.User) {
-	var err error
+func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (*types.Exception, *types.User) {
+
 	err, createdUser := uc.userPersistence.Create(ctx, user)
 
 	if err != nil {
@@ -28,10 +28,10 @@ func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (err
 	return nil, createdUser
 }
 
-func (uc *userUseCaseImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (error, *types.User) {
+func (uc *userUseCaseImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (*types.Exception, *types.User) {
 	return nil, nil
 }
 
-func (uc *userUseCaseImpl) Find(ctx context.Context, params dtos.QueryParams) (error, *[]types.User) {
+func (uc *userUseCaseImpl) Find(ctx context.Context, params dtos.QueryParams) (*types.Exception, *[]types.User) {
 	return nil, nil
 }

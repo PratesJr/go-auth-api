@@ -8,7 +8,7 @@ import (
 )
 
 type UserUseCase interface {
-	Create(ctx context.Context, user *dtos.UsersDto) (error, *types.User)
-	Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (error, *types.User)
-	Find(ctx context.Context, params dtos.QueryParams) (error, *[]types.User)
+	Create(ctx context.Context, user *dtos.UsersDto) (*types.Exception, *types.User)
+	Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (*types.Exception, *types.User)
+	Find(ctx context.Context, params dtos.QueryParams) (*types.Exception, *[]types.User)
 }
