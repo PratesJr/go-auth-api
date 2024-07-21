@@ -1,12 +1,23 @@
 package enums
 
-type HttpStatus int
+type httpStatus struct {
+	BadRequest          int
+	UnprocessableEntity int
+	Forbidden           int
+	Conflict            int
+	Unauthorized        int
+	InternalServerError int
+	UnknownError        int
+	BadGateway          int
+}
 
-const (
-	Forbidden           HttpStatus = 403
-	Unauthorized        HttpStatus = 401
-	Conflict            HttpStatus = 409
-	BadRequest          HttpStatus = 400
-	ServerInternalError HttpStatus = 500
-	UnprocessableEntity HttpStatus = 422
-)
+var StatusCode = &httpStatus{
+	BadRequest:          400,
+	UnprocessableEntity: 422,
+	Forbidden:           403,
+	Conflict:            409,
+	Unauthorized:        401,
+	InternalServerError: 500,
+	UnknownError:        520,
+	BadGateway:          502,
+}
