@@ -3,9 +3,10 @@ package validators
 import (
 	"errors"
 	"github.com/go-playground/validator/v10"
+	"go-auth-api/internal/domain/exceptions"
 )
 
-func Validate(object interface{}) error {
+func Validate(object interface{}) *exceptions.ErrorType {
 	validate := validator.New()
 	err := validate.Struct(object)
 	if nil == err {

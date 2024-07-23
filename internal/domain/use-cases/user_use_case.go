@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
+	"go-auth-api/internal/domain/exceptions"
 	"go-auth-api/internal/domain/types"
 )
 
@@ -18,20 +19,20 @@ func UserUseCaseConstructor(userPersistence adapters.UserPersistence) adapters.U
 	}
 }
 
-func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (*types.Exception, *types.User) {
+func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (*types.User, *exceptions.ErrorType) {
 
-	err, createdUser := uc.userPersistence.Create(ctx, user)
+	createdUser, err := uc.userPersistence.Create(ctx, user)
 
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
-	return nil, createdUser
+	return createdUser, nil
 }
 
-func (uc *userUseCaseImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (*types.Exception, *types.User) {
+func (uc *userUseCaseImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (*types.User, *exceptions.ErrorType) {
 	return nil, nil
 }
 
-func (uc *userUseCaseImpl) Find(ctx context.Context, params dtos.QueryParams) (*types.Exception, *[]types.User) {
+func (uc *userUseCaseImpl) Find(ctx context.Context, params dtos.QueryParams) (*[]types.User, *exceptions.ErrorType) {
 	return nil, nil
 }

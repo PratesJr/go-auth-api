@@ -1,79 +1,64 @@
 package exceptions
 
-import "go-auth-api/internal/domain/enums"
-
-type ErrorType struct {
-	Description string
-	Error       string
-	StatusCode  int
+type ErrorType interface {
+	Error() string
+	Description() string
+	ToMap() *map[string]interface{}
+	StatusCode() int
 }
 
-func BadRequestException(description string, err string) ErrorType {
-	return ErrorType{
-		Description: description,
-		StatusCode:  enums.StatusCode.BadRequest,
-		Error:       err,
-	}
+type errorType struct {
+	id          string
+	statusCode  int
+	code        string
+	details     any
+	description string
+	message     string
 }
 
-func ConflictException(description string, err string) ErrorType {
-	return ErrorType{
-		Description: description,
-		StatusCode:  enums.StatusCode.Conflict,
-		Error:       err,
-	}
+type ErrorDetails struct {
+	Attribute string `json:"attribute"`
+	Messages  string `json:"messages"`
 }
 
-func ForbiddenException(description string, err string) ErrorType {
-	return ErrorType{
-		Description: description,
-		StatusCode:  enums.StatusCode.Forbidden,
-		Error:       err,
-	}
+func NewErrorDetail(attribute string, message string) []ErrorDetails {
+
+	return []ErrorDetails{{
+		Attribute: attribute,
+		Messages:  message,
+	}}
 }
 
-func UnauthorizedException(description string, err string) ErrorType {
-	return ErrorType{
-		Description: description,
-		StatusCode:  enums.StatusCode.Unauthorized,
-		Error:       err,
+func (e *errorType) ToMap() *map[string]interface{} {
+	result := map[string]interface{}{
+		"id":          e.id,
+		"code":        e.code,
+		"description": e.description,
+		"message":     e.message,
 	}
-}
-func UnprocessableEntityException(description string, err string) ErrorType {
-	return ErrorType{
-		Description: description,
-		StatusCode:  enums.StatusCode.UnprocessableEntity,
-		Error:       err,
+
+	if e.details != nil {
+		result["details"] = e.details
 	}
-}
-func InternalServerErrorException(description string, err string) ErrorType {
-	return ErrorType{
-		Description: description,
-		StatusCode:  enums.StatusCode.InternalServerError,
-		Error:       err,
-	}
+	return &result
 }
 
-func BadGatewayException(description string, err string) ErrorType {
-	return ErrorType{
-		Description: description,
-		StatusCode:  enums.StatusCode.BadGateway,
-		Error:       err,
-	}
+func (e *errorType) Error() string {
+	return e.message
 }
 
-func UnknownErrorException(description string, err string) ErrorType {
-	return ErrorType{
-		Description: description,
-		StatusCode:  enums.StatusCode.UnknownError,
-		Error:       err,
-	}
+func (e *errorType) Description() string {
+	return e.description
+}
+
+func (e *errorType) StatusCode() int {
+	return e.statusCode
 }
 
 type HttpException struct {
 	Id          string    `json:"id"`
 	Description string    `json:"description"`
 	Datetime    string    `json:"date_time"`
-	Messages    *[]string `json:"messages,omitempty"`
-	StatusCode  int
+	Details     *[]string `json:"details,omitempty"`
+	StatusCode  int       `json:"status_code"`
 }

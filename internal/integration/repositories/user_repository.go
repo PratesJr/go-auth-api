@@ -4,8 +4,6 @@ import (
 	"context"
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
-	"go-auth-api/internal/domain/exceptions"
-	"go-auth-api/internal/domain/types"
 	"go-auth-api/internal/integration/builder"
 	"go-auth-api/internal/integration/models"
 	"gorm.io/gorm"
@@ -22,38 +20,32 @@ func UserRepositoryConstructor(database gorm.DB, model models.UsersModel) adapte
 		db:    database,
 	}
 }
-func (ur *userRepositoryImpl) Insert(ctx context.Context, data models.UsersModel) *types.Exception {
+func (ur *userRepositoryImpl) Insert(ctx context.Context, data models.UsersModel) error {
 
 	err := ur.db.WithContext(ctx).Model(&ur.model).Create(&data)
 
 	if err != nil {
 
-		return exceptions.DatabaseException(
-			"Error while trying persist data on PostgreSql",
-			err.Error,
-		)
+		return err.Error
 	}
 
-	return nil
+	return err.Error
 
 }
 
-func (ur *userRepositoryImpl) Update(ctx context.Context, data models.UsersModel) *types.Exception {
+func (ur *userRepositoryImpl) Update(ctx context.Context, data models.UsersModel) error {
 
 	err := ur.db.WithContext(ctx).Model(&ur.model).Save(&data)
 
 	if err != nil {
 
-		return exceptions.DatabaseException(
-			"Error while trying persist data on PostgreSql",
-			err.Error,
-		)
+		return err.Error
 	}
 
 	return nil
 
 }
-func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.QueryParams) (*types.Exception, *[]models.UsersModel) {
+func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.QueryParams) (*[]models.UsersModel, error) {
 	var users []models.UsersModel
 
 	query := builder.BuildGormQuery(queryParams)
@@ -63,16 +55,12 @@ func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.Query
 	err := ur.db.WithContext(ctx).Model(&ur.model).Scopes(query...).Scopes(pagination).Find(&users)
 
 	if err != nil {
-
-		return exceptions.DatabaseException(
-			"Error while trying get data from PostgreSql",
-			err.Error,
-		), nil
+		return nil, err.Error
 	}
-	return nil, &users
+	return &users, nil
 
 }
-func (ur *userRepositoryImpl) Count(ctx context.Context, queryParams dtos.QueryParams) (*types.Exception, *int64) {
+func (ur *userRepositoryImpl) Count(ctx context.Context, queryParams dtos.QueryParams) (*int64, error) {
 	var count *int64
 
 	query := builder.BuildGormQuery(queryParams)
@@ -80,11 +68,8 @@ func (ur *userRepositoryImpl) Count(ctx context.Context, queryParams dtos.QueryP
 	err := ur.db.WithContext(ctx).Model(&ur.model).Scopes(query...).Count(count)
 
 	if err.Error != nil {
-
-		return exceptions.DatabaseException(
-			"Error while trying to get data from PostgreSql",
-			err.Error), nil
+		return nil, err.Error
 	}
 
-	return nil, count
+	return count, nil
 }

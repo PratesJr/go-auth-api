@@ -4,6 +4,7 @@ import (
 	"context"
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
+	"go-auth-api/internal/domain/exceptions"
 	"go-auth-api/internal/domain/types"
 	"go-auth-api/internal/integration/models"
 	"go-auth-api/internal/utils"
@@ -19,29 +20,35 @@ func UserPersistenceConstructor(repository adapters.UserRepository) adapters.Use
 	}
 }
 
-func (up *userPersistenceImpl) Create(ctx context.Context, data *dtos.UsersDto) (*types.Exception, *types.User) {
+func (up *userPersistenceImpl) Create(ctx context.Context, data *dtos.UsersDto) (*types.User, *exceptions.ErrorType) {
 	dataToPersist := models.NewUserModel(data)
 
 	err := up.repo.Insert(ctx, *dataToPersist)
 
 	if err != nil {
-		return err, nil
+		return nil, exceptions.InternalServerErrorException(
+			"Error while trying to insert data into postgreSql table",
+			err.Error(),
+		)
 	}
 
-	return nil, &types.User{
+	return &types.User{
 		Id:        utils.ToPointer(dataToPersist.ID.String()),
 		Name:      &dataToPersist.Name,
 		Email:     &dataToPersist.Email,
 		CreatedAt: utils.ToPointer(dataToPersist.CreatedAt.String()),
-	}
+	}, nil
 }
 
-func (up *userPersistenceImpl) Find(ctx context.Context, params *dtos.QueryParams) (*types.Exception, *[]types.User) {
+func (up *userPersistenceImpl) Find(ctx context.Context, params *dtos.QueryParams) (*[]types.User, *exceptions.ErrorType) {
 
-	err, arrayUser := up.repo.Select(ctx, *params)
+	arrayUser, err := up.repo.Select(ctx, *params)
 
 	if arrayUser != nil {
-		return err, nil
+		return nil, exceptions.InternalServerErrorException(
+			"Error while trying to select data from postgreSql",
+			err.Error(),
+		)
 	}
 
 	var result = make([]types.User, len(*arrayUser))
@@ -57,20 +64,23 @@ func (up *userPersistenceImpl) Find(ctx context.Context, params *dtos.QueryParam
 
 	}
 
-	return nil, &result
+	return &result, nil
 }
 
-func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id string) (*types.Exception, *types.User) {
+func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id string) (*types.User, *exceptions.ErrorType) {
 
 	querySelect := dtos.QueryParams{
 		Id:    &id,
 		Limit: utils.ToPointer(1),
 	}
 
-	err, userArr := up.repo.Select(ctx, querySelect)
+	userArr, err := up.repo.Select(ctx, querySelect)
 
 	if err != nil {
-		return err, nil
+		return nil, exceptions.InternalServerErrorException(
+			"Error while trying to select  data into postgreSql table",
+			err.Error(),
+		)
 	}
 	user := *userArr
 	userToUpdate := user[0].UpdateData(data)
@@ -78,13 +88,16 @@ func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUser
 	errUpdate := up.repo.Update(ctx, *userToUpdate)
 
 	if errUpdate != nil {
-		return errUpdate, nil
+		return nil, exceptions.InternalServerErrorException(
+			"Error while trying to update data into postgreSql table",
+			err.Error(),
+		)
 	}
 
-	return nil, &types.User{
+	return &types.User{
 		Id:        utils.ToPointer(userToUpdate.ID.String()),
 		Name:      &userToUpdate.Name,
 		Email:     &userToUpdate.Email,
 		CreatedAt: utils.ToPointer(userToUpdate.CreatedAt.String()),
-	}
+	}, nil
 }
