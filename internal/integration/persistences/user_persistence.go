@@ -20,16 +20,13 @@ func UserPersistenceConstructor(repository adapters.UserRepository) adapters.Use
 	}
 }
 
-func (up *userPersistenceImpl) Create(ctx context.Context, data *dtos.UsersDto) (*types.User, *exceptions.ErrorType) {
+func (up *userPersistenceImpl) Create(ctx context.Context, data *dtos.UsersDto) (*types.User, exceptions.ErrorType) {
 	dataToPersist := models.NewUserModel(data)
 
 	err := up.repo.Insert(ctx, *dataToPersist)
 
 	if err != nil {
-		return nil, exceptions.InternalServerErrorException(
-			"Error while trying to insert data into postgreSql table",
-			err.Error(),
-		)
+		return nil, exceptions.DatabaseException(ctx, err.Error())
 	}
 
 	return &types.User{
@@ -40,15 +37,12 @@ func (up *userPersistenceImpl) Create(ctx context.Context, data *dtos.UsersDto) 
 	}, nil
 }
 
-func (up *userPersistenceImpl) Find(ctx context.Context, params *dtos.QueryParams) (*[]types.User, *exceptions.ErrorType) {
+func (up *userPersistenceImpl) Find(ctx context.Context, params *dtos.QueryParams) (*[]types.User, exceptions.ErrorType) {
 
 	arrayUser, err := up.repo.Select(ctx, *params)
 
 	if arrayUser != nil {
-		return nil, exceptions.InternalServerErrorException(
-			"Error while trying to select data from postgreSql",
-			err.Error(),
-		)
+		return nil, exceptions.DatabaseException(ctx, err.Error())
 	}
 
 	var result = make([]types.User, len(*arrayUser))
@@ -67,7 +61,7 @@ func (up *userPersistenceImpl) Find(ctx context.Context, params *dtos.QueryParam
 	return &result, nil
 }
 
-func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id string) (*types.User, *exceptions.ErrorType) {
+func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id string) (*types.User, exceptions.ErrorType) {
 
 	querySelect := dtos.QueryParams{
 		Id:    &id,
@@ -77,10 +71,7 @@ func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUser
 	userArr, err := up.repo.Select(ctx, querySelect)
 
 	if err != nil {
-		return nil, exceptions.InternalServerErrorException(
-			"Error while trying to select  data into postgreSql table",
-			err.Error(),
-		)
+		return nil, exceptions.DatabaseException(ctx, err.Error())
 	}
 	user := *userArr
 	userToUpdate := user[0].UpdateData(data)
@@ -88,10 +79,7 @@ func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUser
 	errUpdate := up.repo.Update(ctx, *userToUpdate)
 
 	if errUpdate != nil {
-		return nil, exceptions.InternalServerErrorException(
-			"Error while trying to update data into postgreSql table",
-			err.Error(),
-		)
+		return nil, exceptions.DatabaseException(ctx, err.Error())
 	}
 
 	return &types.User{

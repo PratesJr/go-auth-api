@@ -8,7 +8,7 @@ import (
 )
 
 type UserPersistence interface {
-	Create(ctx context.Context, data *dtos.UsersDto) (*types.User, *exceptions.ErrorType)
-	Find(ctx context.Context, params *dtos.QueryParams) (*[]types.User, *exceptions.ErrorType)
-	Update(ctx context.Context, data *dtos.UpdateUserDto, id string) (*types.User, *exceptions.ErrorType)
+	Create(ctx context.Context, data *dtos.UsersDto) (*types.User, exceptions.ErrorType)
+	Find(ctx context.Context, params *dtos.QueryParams) (*[]types.User, exceptions.ErrorType)
+	Update(ctx context.Context, data *dtos.UpdateUserDto, id string) (*types.User, exceptions.ErrorType)
 }

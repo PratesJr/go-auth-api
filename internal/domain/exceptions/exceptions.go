@@ -41,3 +41,31 @@ func UnauthorizedException(ctx context.Context, errMessage string) ErrorType {
 	}
 	return &ex
 }
+
+func UnprocessableEntity(ctx context.Context, errMessage string, details []error) ErrorType {
+	id := config.GetRequestId(ctx)
+
+	ex := errorType{
+		id:          id,
+		statusCode:  enums.StatusCode.UnprocessableEntity,
+		code:        "422_UNPROCESSABLE_ENTITY",
+		details:     details,
+		description: "Unprocessable entity.",
+		message:     errMessage,
+	}
+	return &ex
+}
+
+func DatabaseException(ctx context.Context, errMessage string) ErrorType {
+	id := config.GetRequestId(ctx)
+
+	ex := errorType{
+		id:          id,
+		statusCode:  enums.StatusCode.InternalServerError,
+		code:        "500_INTERNAL_ERROR",
+		details:     nil,
+		description: "Something went wrong.",
+		message:     errMessage,
+	}
+	return &ex
+}

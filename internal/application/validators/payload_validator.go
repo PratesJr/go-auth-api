@@ -1,28 +1,38 @@
 package validators
 
 import (
+	"context"
 	"errors"
 	"github.com/go-playground/validator/v10"
 	"go-auth-api/internal/domain/exceptions"
 )
 
-func Validate(object interface{}) *exceptions.ErrorType {
+func Validate(object interface{}, ctx context.Context) exceptions.ErrorType {
 	validate := validator.New()
 	err := validate.Struct(object)
-	if nil == err {
+	if err == nil {
 		return nil
 	}
 	validationErr := err.(validator.ValidationErrors)[0]
+	var ex []error
 
 	switch validationErr.Tag() {
+
 	case "required":
-		return errors.New(validationErr.StructField() + " is required")
+		ex = append(ex, errors.New(validationErr.StructField()+" is required"))
+
 	case "min":
-		return errors.New(validationErr.StructField() + " is required with min " + validationErr.Param())
+		ex = append(ex, errors.New(validationErr.StructField()+" is required with min "+validationErr.Param()))
+
 	case "max":
-		return errors.New(validationErr.StructField() + " is required with max " + validationErr.Param())
+		ex = append(ex, errors.New(validationErr.StructField()+" is required with max "+validationErr.Param()))
+
 	case "email":
-		return errors.New(validationErr.StructField() + " is not valid")
+		ex = append(ex, errors.New(validationErr.StructField()+" is not valid"))
+	}
+
+	if len(ex) > 0 {
+		return exceptions.UnprocessableEntity(ctx, "invalid payload", ex)
 	}
 
 	return nil
