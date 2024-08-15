@@ -6,10 +6,9 @@ import (
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 	"go-auth-api/internal/application/parsers"
-	"go-auth-api/internal/application/validators"
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
-	"go-auth-api/internal/domain/types"
+	"go-auth-api/internal/domain/exceptions"
 	"net/http"
 )
 
@@ -39,30 +38,21 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errValidation := validators.Validate(payload)
-
-	if errValidation != nil {
-		render.Status(r, 400)
-		render.JSON(rw, r, map[string]string{})
-
-		return
-	}
-
-	errBusiness, result := c.useCase.Create(ctx, &payload)
+	result, errBusiness := c.useCase.Create(ctx, &payload)
 
 	if errBusiness != nil {
 
-		errResponse, statusCode := parsers.HttpErrorParser(nil, ctx, nil)
+		errResponse := parsers.HttpErrorParser(errBusiness, ctx, nil)
 
-		render.Status(r, int(*statusCode))
-		render.JSON(rw, r, map[string]types.HttpException{"error": *errResponse})
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
 
 		return
 	}
 
 	render.Status(r, 201)
 
-	render.JSON(rw, r, map[string]types.User{"data": *result})
+	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
 
 func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
@@ -80,15 +70,6 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errValidator := validators.Validate(payload)
-
-	if errValidator != nil {
-		render.Status(r, 400)
-		render.JSON(rw, r, map[string]string{})
-
-		return
-	}
-
 	id := chi.URLParam(r, "id")
 
 	parsedUuid, errUuid := uuid.Parse(id)
@@ -100,16 +81,19 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err, result := c.useCase.Update(ctx, &payload, parsedUuid)
+	result, err := c.useCase.Update(ctx, &payload, parsedUuid)
 
 	if err != nil {
-		render.Status(r, 500)
-		render.JSON(rw, r, map[string]string{})
+		errResponse := parsers.HttpErrorParser(err, ctx, nil)
+
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
+
 		return
 	}
 
 	render.Status(r, 200)
-	render.JSON(rw, r, result)
+	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
 func (c *userController) FindUser(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -119,8 +103,6 @@ func (c *userController) FindUser(rw http.ResponseWriter, r *http.Request) {
 	var query dtos.QueryParams
 
 	query.BuildQuery(r.URL.Query())
-
-	err = validators.Validate(query)
 
 	if err != nil {
 		render.Status(r, 400)

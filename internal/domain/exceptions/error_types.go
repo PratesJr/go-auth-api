@@ -5,6 +5,7 @@ type ErrorType interface {
 	Description() string
 	ToMap() *map[string]interface{}
 	StatusCode() int
+	Details() any
 }
 
 type errorType struct {
@@ -55,10 +56,12 @@ func (e *errorType) StatusCode() int {
 	return e.statusCode
 }
 
+func (e *errorType) Details() any { return e.details }
+
 type HttpException struct {
-	Id          string    `json:"id"`
-	Description string    `json:"description"`
-	Datetime    string    `json:"date_time"`
-	Details     *[]string `json:"details,omitempty"`
-	StatusCode  int       `json:"status_code"`
+	Id          string `json:"id"`
+	Description string `json:"description"`
+	Datetime    string `json:"date_time"`
+	Details     any    `json:"details,omitempty"`
+	StatusCode  int    `json:"status_code"`
 }
