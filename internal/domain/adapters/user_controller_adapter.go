@@ -5,7 +5,7 @@ import (
 )
 
 type UsersController interface {
-	NewUser(rw http.ResponseWriter, r *http.Request)
-	UpdateUser(rw http.ResponseWriter, r *http.Request)
-	FindUser(rw http.ResponseWriter, r *http.Request)
+	Post(rw http.ResponseWriter, r *http.Request)
+	Put(rw http.ResponseWriter, r *http.Request)
+	Get(rw http.ResponseWriter, r *http.Request)
 }

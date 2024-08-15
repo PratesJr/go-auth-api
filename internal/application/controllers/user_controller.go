@@ -22,7 +22,7 @@ func UserControllerConstructor(useCase adapters.UserUseCase) adapters.UsersContr
 	}
 }
 
-func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
+func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
 
@@ -31,9 +31,10 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 	err := render.DecodeJSON(r.Body, &payload)
 
 	if err != nil {
+		errResponse := parsers.HttpErrorParser(nil, ctx, &err)
 
-		render.Status(r, 400)
-		render.JSON(rw, r, map[string]string{})
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
 
 		return
 	}
@@ -51,11 +52,10 @@ func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	render.Status(r, 201)
-
 	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
 
-func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
+func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
 
@@ -95,7 +95,7 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 	render.Status(r, 200)
 	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
-func (c *userController) FindUser(rw http.ResponseWriter, r *http.Request) {
+func (c *userController) Get(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
 
