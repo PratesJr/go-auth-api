@@ -2,7 +2,6 @@ package validators
 
 import (
 	"context"
-	"errors"
 	"github.com/go-playground/validator/v10"
 	"go-auth-api/internal/domain/exceptions"
 )
@@ -14,21 +13,21 @@ func Validate(object interface{}, ctx context.Context) exceptions.ErrorType {
 		return nil
 	}
 	validationErr := err.(validator.ValidationErrors)[0]
-	var ex []error
+	var ex []exceptions.ErrorDetails
 
 	switch validationErr.Tag() {
 
 	case "required":
-		ex = append(ex, errors.New(validationErr.StructField()+" is required"))
+		ex = append(ex, exceptions.NewErrorDetail(validationErr.StructField(), " is required"))
 
 	case "min":
-		ex = append(ex, errors.New(validationErr.StructField()+" is required with min "+validationErr.Param()))
+		ex = append(ex, exceptions.NewErrorDetail(validationErr.StructField(), " is required with min "+validationErr.Param()))
 
 	case "max":
-		ex = append(ex, errors.New(validationErr.StructField()+" is required with max "+validationErr.Param()))
+		ex = append(ex, exceptions.NewErrorDetail(validationErr.StructField(), " is required with max "+validationErr.Param()))
 
 	case "email":
-		ex = append(ex, errors.New(validationErr.StructField()+" is not valid"))
+		ex = append(ex, exceptions.NewErrorDetail(validationErr.StructField(), " is not valid"))
 	}
 
 	if len(ex) > 0 {

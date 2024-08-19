@@ -2,7 +2,6 @@ package exceptions
 
 import (
 	"context"
-	"encoding/json"
 	"go-auth-api/internal/application/config"
 	"go-auth-api/internal/domain/enums"
 )
@@ -10,18 +9,11 @@ import (
 func BadRequestException(ctx context.Context, errMessage string, details ...ErrorDetails) ErrorType {
 	id := config.GetRequestId(ctx)
 
-	var mapDetails []map[string]interface{}
-	if details != nil {
-
-		a, _ := json.Marshal(details)
-		_ = json.Unmarshal(a, &mapDetails)
-	}
-
 	ex := errorType{
 		id:          id,
 		statusCode:  enums.StatusCode.BadRequest,
 		code:        "400_BAD_REQUEST",
-		details:     mapDetails,
+		details:     details,
 		description: "Bad Request.",
 		message:     errMessage,
 	}
@@ -42,7 +34,7 @@ func UnauthorizedException(ctx context.Context, errMessage string) ErrorType {
 	return &ex
 }
 
-func UnprocessableEntity(ctx context.Context, errMessage string, details []error) ErrorType {
+func UnprocessableEntity(ctx context.Context, errMessage string, details []ErrorDetails) ErrorType {
 	id := config.GetRequestId(ctx)
 
 	ex := errorType{

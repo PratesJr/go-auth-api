@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-func HttpErrorParser(customErr exceptions.ErrorType, ctx context.Context, err *error) exceptions.HttpException {
+func HttpErrorParser(customErr exceptions.ErrorType, ctx context.Context, err error) exceptions.HttpException {
 	var errResponse exceptions.HttpException
 
-	errResponse.Datetime = time.Now().String()
+	errResponse.Datetime = time.Now().Format(time.DateTime)
 	errResponse.Id = ctx.Value("request_id").(string)
 
 	if customErr == nil && err != nil {

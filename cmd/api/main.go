@@ -13,15 +13,18 @@ import (
 func main() {
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+
 	injector := dependencies.GetInjector().InjectDependencies()
 
 	r := application.Application(injector.UserController)
 
-	err := http.ListenAndServe(":3000", r)
+	err := http.ListenAndServe(":3333", r)
 
 	if err != nil {
+
 		fmt.Printf("error while starting server")
 		return
+
 	}
 
 	sig := <-sigCh

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
@@ -25,19 +26,21 @@ func UserControllerConstructor(useCase adapters.UserUseCase) adapters.UsersContr
 func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
-
+	var err error
 	var payload dtos.UsersDto
 
-	err := render.DecodeJSON(r.Body, &payload)
+	b, err := json.Marshal(r.Body)
 
 	if err != nil {
-		errResponse := parsers.HttpErrorParser(nil, ctx, &err)
+		errResponse := parsers.HttpErrorParser(nil, ctx, err)
 
 		render.Status(r, errResponse.StatusCode)
 		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
 
 		return
 	}
+
+	err = json.Unmarshal(b, &payload)
 
 	result, errBusiness := c.useCase.Create(ctx, &payload)
 
