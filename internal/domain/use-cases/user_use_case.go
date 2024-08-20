@@ -21,8 +21,7 @@ func UserUseCaseConstructor(userPersistence adapters.UserPersistence) adapters.U
 }
 
 func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (*types.User, exceptions.ErrorType) {
-
-	validationErr := validators.Validate(user, ctx)
+	validationErr := validators.Validate(*user, ctx)
 
 	if validationErr != nil {
 		return nil, validationErr
@@ -35,7 +34,7 @@ func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (*ty
 	return createdUser, nil
 }
 
-func (uc *userUseCaseImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (*types.User, exceptions.ErrorType) {
+func (uc *userUseCaseImpl) Update(ctx context.Context, data dtos.UpdateUserDto, id uuid.UUID) (*types.User, exceptions.ErrorType) {
 	return nil, nil
 }
 

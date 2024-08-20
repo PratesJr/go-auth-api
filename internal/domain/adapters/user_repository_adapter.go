@@ -7,7 +7,7 @@ import (
 )
 
 type UserRepository interface {
-	Insert(ctx context.Context, data models.UsersModel) error
+	Insert(ctx context.Context, data *models.UsersModel) error
 	Update(ctx context.Context, data models.UsersModel) error
 	Select(ctx context.Context, queryParams dtos.QueryParams) (*[]models.UsersModel, error)
 	Count(ctx context.Context, queryParams dtos.QueryParams) (*int64, error)

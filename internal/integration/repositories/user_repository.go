@@ -20,9 +20,9 @@ func UserRepositoryConstructor(database gorm.DB, model models.UsersModel) adapte
 		db:    database,
 	}
 }
-func (ur *userRepositoryImpl) Insert(ctx context.Context, data models.UsersModel) error {
+func (ur *userRepositoryImpl) Insert(ctx context.Context, data *models.UsersModel) error {
 
-	err := ur.db.WithContext(ctx).Model(&ur.model).Create(&data)
+	err := ur.db.WithContext(ctx).Model(&ur.model).Create(data)
 
 	if err != nil {
 

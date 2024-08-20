@@ -26,7 +26,7 @@ func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
 	var err error
-	var payload dtos.UsersDto
+	var payload *dtos.UsersDto
 
 	err = render.DecodeJSON(r.Body, &payload)
 
@@ -38,8 +38,7 @@ func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
-	result, errBusiness := c.useCase.Create(ctx, &payload)
+	result, errBusiness := c.useCase.Create(ctx, payload)
 
 	if errBusiness != nil {
 
@@ -81,7 +80,7 @@ func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := c.useCase.Update(ctx, &payload, parsedUuid)
+	result, err := c.useCase.Update(ctx, payload, parsedUuid)
 
 	if err != nil {
 		errResponse := parsers.HttpErrorParser(err, ctx, nil)

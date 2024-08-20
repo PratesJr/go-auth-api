@@ -21,9 +21,9 @@ func UserPersistenceConstructor(repository adapters.UserRepository) adapters.Use
 }
 
 func (up *userPersistenceImpl) Create(ctx context.Context, data *dtos.UsersDto) (*types.User, exceptions.ErrorType) {
-	dataToPersist := models.NewUserModel(data)
+	dataToPersist := models.NewUserModel(*data)
 
-	err := up.repo.Insert(ctx, *dataToPersist)
+	err := up.repo.Insert(ctx, dataToPersist)
 
 	if err != nil {
 		return nil, exceptions.DatabaseException(ctx, err.Error())
@@ -37,9 +37,9 @@ func (up *userPersistenceImpl) Create(ctx context.Context, data *dtos.UsersDto) 
 	}, nil
 }
 
-func (up *userPersistenceImpl) Find(ctx context.Context, params *dtos.QueryParams) (*[]types.User, exceptions.ErrorType) {
+func (up *userPersistenceImpl) Find(ctx context.Context, params dtos.QueryParams) (*[]types.User, exceptions.ErrorType) {
 
-	arrayUser, err := up.repo.Select(ctx, *params)
+	arrayUser, err := up.repo.Select(ctx, params)
 
 	if arrayUser != nil {
 		return nil, exceptions.DatabaseException(ctx, err.Error())
@@ -61,7 +61,7 @@ func (up *userPersistenceImpl) Find(ctx context.Context, params *dtos.QueryParam
 	return &result, nil
 }
 
-func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id string) (*types.User, exceptions.ErrorType) {
+func (up *userPersistenceImpl) Update(ctx context.Context, data dtos.UpdateUserDto, id string) (*types.User, exceptions.ErrorType) {
 
 	querySelect := dtos.QueryParams{
 		Id:    &id,
