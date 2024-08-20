@@ -21,9 +21,8 @@ func (UsersModel) TableName() string {
 	return "auth_users.users"
 }
 
-func NewUserModel(body *dtos.UsersDto) *UsersModel {
-
-	parseDate, err := time.Parse("YYYY-MM-DD", *body.Birth)
+func NewUserModel(body dtos.UsersDto) *UsersModel {
+	parseDate, err := time.Parse(time.DateOnly, *body.Birth)
 
 	if err != nil {
 		return nil
@@ -49,7 +48,7 @@ func NewUserModel(body *dtos.UsersDto) *UsersModel {
 func UpdateUserData(dto *dtos.UpdateUserDto, user *UsersModel) *UsersModel {
 
 	if dto.Birth != nil {
-		parseDate, err := time.Parse("YYYY-MM-DD", *dto.Birth)
+		parseDate, err := time.Parse(time.DateOnly, *dto.Birth)
 
 		if err != nil {
 			return nil
@@ -71,7 +70,7 @@ func UpdateUserData(dto *dtos.UpdateUserDto, user *UsersModel) *UsersModel {
 	return user
 }
 
-func (user UsersModel) UpdateData(dto *dtos.UpdateUserDto) *UsersModel {
+func (user UsersModel) UpdateData(dto dtos.UpdateUserDto) *UsersModel {
 
 	if dto.Birth != nil {
 		parseDate, err := time.Parse("YYYY-MM-DD", *dto.Birth)

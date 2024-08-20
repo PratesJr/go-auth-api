@@ -1,6 +1,8 @@
 package config
 
 import (
+	"context"
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"go-auth-api/internal/domain/types"
 	"go-auth-api/internal/utils"
@@ -20,4 +22,18 @@ func LoadEnv() *types.EnvProperties {
 		DatabasePort:   utils.ToPointer(os.Getenv("DATABASE_PORT")),
 	}
 
+}
+
+func GetRequestId(ctx context.Context) string {
+	reqId, _ := ctx.Value("request_id").(string)
+
+	return reqId
+}
+
+func SetRequestId(ctx context.Context) context.Context {
+
+	id, _ := uuid.NewUUID()
+	ctx = context.WithValue(ctx, "request_id", id.String())
+
+	return ctx
 }

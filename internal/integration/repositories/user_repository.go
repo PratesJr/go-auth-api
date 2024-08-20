@@ -20,22 +20,32 @@ func UserRepositoryConstructor(database gorm.DB, model models.UsersModel) adapte
 		db:    database,
 	}
 }
-func (ur *userRepositoryImpl) Insert(ctx context.Context, data models.UsersModel) error {
+func (ur *userRepositoryImpl) Insert(ctx context.Context, data *models.UsersModel) error {
 
-	user := ur.db.WithContext(ctx).Model(&ur.model).Create(&data)
+	err := ur.db.WithContext(ctx).Model(&ur.model).Create(data)
 
-	return user.Error
+	if err != nil {
+
+		return err.Error
+	}
+
+	return err.Error
 
 }
 
 func (ur *userRepositoryImpl) Update(ctx context.Context, data models.UsersModel) error {
 
-	user := ur.db.WithContext(ctx).Model(&ur.model).Save(&data)
+	err := ur.db.WithContext(ctx).Model(&ur.model).Save(&data)
 
-	return user.Error
+	if err != nil {
+
+		return err.Error
+	}
+
+	return nil
 
 }
-func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.QueryParams) (error, *[]models.UsersModel) {
+func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.QueryParams) (*[]models.UsersModel, error) {
 	var users []models.UsersModel
 
 	query := builder.BuildGormQuery(queryParams)
@@ -45,17 +55,21 @@ func (ur *userRepositoryImpl) Select(ctx context.Context, queryParams dtos.Query
 	err := ur.db.WithContext(ctx).Model(&ur.model).Scopes(query...).Scopes(pagination).Find(&users)
 
 	if err != nil {
-		return err.Error, nil
+		return nil, err.Error
 	}
-	return nil, &users
+	return &users, nil
 
 }
-func (ur *userRepositoryImpl) Count(ctx context.Context, queryParams dtos.QueryParams) (error, *int64) {
+func (ur *userRepositoryImpl) Count(ctx context.Context, queryParams dtos.QueryParams) (*int64, error) {
 	var count *int64
 
 	query := builder.BuildGormQuery(queryParams)
 
-	ur.db.WithContext(ctx).Model(&ur.model).Scopes(query...).Count(count)
+	err := ur.db.WithContext(ctx).Model(&ur.model).Scopes(query...).Count(count)
 
-	return nil, count
+	if err.Error != nil {
+		return nil, err.Error
+	}
+
+	return count, nil
 }

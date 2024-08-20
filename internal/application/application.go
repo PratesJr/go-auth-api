@@ -23,7 +23,7 @@ func Application(userController adapters.UsersController) *chi.Mux {
 		}),
 	)
 	router.Route("/auth-api", func(r chi.Router) {
-		r.Mount("/user/v1", userRouter.SetupUserRoutes(userController, nil))
+		r.Mount("/v1/users/", userRouter.SetupUserRoutes(userController, nil))
 	})
 
 	fmt.Println("Server Started...")

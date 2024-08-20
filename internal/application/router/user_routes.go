@@ -10,7 +10,7 @@ func SetupUserRoutes(controller adapters.UsersController, middlewares []func(htt
 	routes := chi.NewRouter()
 	routes.Use(middlewares...)
 
-	routes.Post("/user", controller.NewUser)
+	routes.Post("/user", controller.Post)
 
 	return routes
 }

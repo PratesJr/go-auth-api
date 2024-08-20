@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"context"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
-	"go-auth-api/internal/application/validators"
+	"go-auth-api/internal/application/parsers"
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
+	"go-auth-api/internal/domain/exceptions"
 	"net/http"
 )
 
@@ -20,66 +22,47 @@ func UserControllerConstructor(useCase adapters.UserUseCase) adapters.UsersContr
 	}
 }
 
-func (c *userController) NewUser(rw http.ResponseWriter, r *http.Request) {
+func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	var payload dtos.UsersDto
+	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
 	var err error
+	var payload *dtos.UsersDto
 
 	err = render.DecodeJSON(r.Body, &payload)
 
 	if err != nil {
-		render.Status(r, 400)
-		render.JSON(rw, r, map[string]string{})
+		errResponse := parsers.HttpErrorParser(nil, ctx, err)
+
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
+
+		return
+	}
+	result, errBusiness := c.useCase.Create(ctx, payload)
+
+	if errBusiness != nil {
+
+		errResponse := parsers.HttpErrorParser(errBusiness, ctx, nil)
+
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
 
 		return
 	}
 
-	err = validators.Validate(payload)
-
-	if err != nil {
-		render.Status(r, 400)
-		render.JSON(rw, r, map[string]string{})
-
-		return
-	}
-
-	err, result := c.useCase.Create(ctx, &payload)
-
-	if err != nil {
-		render.Status(r, 500)
-		render.JSON(rw, r, map[string]string{})
-
-		return
-	}
-
-	if err != nil {
-		render.Status(r, 500)
-		render.JSON(rw, r, map[string]string{})
-
-		return
-	}
 	render.Status(r, 201)
-
-	render.JSON(rw, r, result)
+	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
 
-func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
+func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
+
 	var payload dtos.UpdateUserDto
-	var err error
 
-	err = render.DecodeJSON(r.Body, &payload)
+	errDecode := render.DecodeJSON(r.Body, &payload)
 
-	if err != nil {
-		render.Status(r, 400)
-		render.JSON(rw, r, map[string]string{})
-
-		return
-	}
-
-	err = validators.Validate(payload)
-
-	if err != nil {
+	if errDecode != nil {
 		render.Status(r, 400)
 		render.JSON(rw, r, map[string]string{})
 
@@ -88,33 +71,37 @@ func (c *userController) UpdateUser(rw http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 
-	parsedUuid, err := uuid.Parse(id)
+	parsedUuid, errUuid := uuid.Parse(id)
 
-	if err != nil {
+	if errUuid != nil {
 		render.Status(r, 400)
 		render.JSON(rw, r, map[string]string{})
 
 		return
 	}
 
-	err, result := c.useCase.Update(ctx, &payload, parsedUuid)
+	result, err := c.useCase.Update(ctx, payload, parsedUuid)
 
 	if err != nil {
-		render.Status(r, 500)
-		render.JSON(rw, r, map[string]string{})
+		errResponse := parsers.HttpErrorParser(err, ctx, nil)
+
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
+
 		return
 	}
 
 	render.Status(r, 200)
-	render.JSON(rw, r, result)
+	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
-func (c *userController) FindUser(rw http.ResponseWriter, r *http.Request) {
+func (c *userController) Get(rw http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
+
 	var err error
 	var query dtos.QueryParams
 
 	query.BuildQuery(r.URL.Query())
-
-	err = validators.Validate(query)
 
 	if err != nil {
 		render.Status(r, 400)
