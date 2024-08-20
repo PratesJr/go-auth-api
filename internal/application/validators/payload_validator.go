@@ -3,7 +3,6 @@ package validators
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/go-playground/validator/v10"
 	"go-auth-api/internal/domain/exceptions"
 )
@@ -11,7 +10,7 @@ import (
 func Validate(object interface{}, ctx context.Context) exceptions.ErrorType {
 	validate := validator.New()
 	err := validate.Struct(object)
-	fmt.Println(err)
+
 	if err == nil {
 		return nil
 	}

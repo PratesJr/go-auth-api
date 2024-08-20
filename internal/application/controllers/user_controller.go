@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"encoding/json"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
@@ -29,7 +28,7 @@ func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 	var err error
 	var payload dtos.UsersDto
 
-	b, err := json.Marshal(r.Body)
+	err = render.DecodeJSON(r.Body, &payload)
 
 	if err != nil {
 		errResponse := parsers.HttpErrorParser(nil, ctx, err)
@@ -39,8 +38,6 @@ func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
-	err = json.Unmarshal(b, &payload)
 
 	result, errBusiness := c.useCase.Create(ctx, &payload)
 
