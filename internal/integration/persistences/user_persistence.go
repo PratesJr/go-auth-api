@@ -61,10 +61,10 @@ func (up *userPersistenceImpl) Find(ctx context.Context, params dtos.QueryParams
 	return &result, nil
 }
 
-func (up *userPersistenceImpl) Update(ctx context.Context, data dtos.UpdateUserDto, id string) (*types.User, exceptions.ErrorType) {
+func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id string) (*types.User, exceptions.ErrorType) {
 
 	querySelect := dtos.QueryParams{
-		Id:    &id,
+		Id:    utils.ToPointer(id),
 		Limit: utils.ToPointer(1),
 	}
 
@@ -74,9 +74,9 @@ func (up *userPersistenceImpl) Update(ctx context.Context, data dtos.UpdateUserD
 		return nil, exceptions.DatabaseException(ctx, err.Error())
 	}
 	user := *userArr
-	userToUpdate := user[0].UpdateData(data)
+	userToUpdate := user[0].UpdateData(*data)
 
-	errUpdate := up.repo.Update(ctx, *userToUpdate)
+	errUpdate := up.repo.Update(ctx, userToUpdate)
 
 	if errUpdate != nil {
 		return nil, exceptions.DatabaseException(ctx, err.Error())

@@ -11,6 +11,7 @@ func SetupUserRoutes(controller adapters.UsersController, middlewares []func(htt
 	routes.Use(middlewares...)
 
 	routes.Post("/user", controller.Post)
+	routes.Put("/user/:id", controller.Put)
 
 	return routes
 }
