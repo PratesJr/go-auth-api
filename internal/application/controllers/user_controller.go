@@ -57,33 +57,37 @@ func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
+	var err error
+	var payload *dtos.UpdateUserDto
 
-	var payload dtos.UpdateUserDto
+	err = render.DecodeJSON(r.Body, &payload)
 
-	errDecode := render.DecodeJSON(r.Body, &payload)
+	if err != nil {
+		errResponse := parsers.HttpErrorParser(nil, ctx, err)
 
-	if errDecode != nil {
-		render.Status(r, 400)
-		render.JSON(rw, r, map[string]string{})
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
 
 		return
 	}
 
 	id := chi.URLParam(r, "id")
 
-	parsedUuid, errUuid := uuid.Parse(id)
+	parsedUuid, err := uuid.Parse(id)
 
-	if errUuid != nil {
-		render.Status(r, 400)
-		render.JSON(rw, r, map[string]string{})
+	if err != nil {
+		errResponse := parsers.HttpErrorParser(nil, ctx, err)
+
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
 
 		return
 	}
 
-	result, err := c.useCase.Update(ctx, payload, parsedUuid)
+	result, errBusiness := c.useCase.Update(ctx, payload, parsedUuid)
 
 	if err != nil {
-		errResponse := parsers.HttpErrorParser(err, ctx, nil)
+		errResponse := parsers.HttpErrorParser(errBusiness, ctx, nil)
 
 		render.Status(r, errResponse.StatusCode)
 		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})

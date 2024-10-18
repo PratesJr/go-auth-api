@@ -33,9 +33,9 @@ func (ur *userRepositoryImpl) Insert(ctx context.Context, data *models.UsersMode
 
 }
 
-func (ur *userRepositoryImpl) Update(ctx context.Context, data models.UsersModel) error {
+func (ur *userRepositoryImpl) Update(ctx context.Context, data *models.UsersModel) error {
 
-	err := ur.db.WithContext(ctx).Model(&ur.model).Save(&data)
+	err := ur.db.WithContext(ctx).Model(&ur.model).Save(data)
 
 	if err != nil {
 

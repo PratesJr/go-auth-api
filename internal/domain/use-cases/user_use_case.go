@@ -34,8 +34,22 @@ func (uc *userUseCaseImpl) Create(ctx context.Context, user *dtos.UsersDto) (*ty
 	return createdUser, nil
 }
 
-func (uc *userUseCaseImpl) Update(ctx context.Context, data dtos.UpdateUserDto, id uuid.UUID) (*types.User, exceptions.ErrorType) {
-	return nil, nil
+func (uc *userUseCaseImpl) Update(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (*types.User, exceptions.ErrorType) {
+	var err exceptions.ErrorType
+
+	err = validators.Validate(*data, ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := uc.userPersistence.Update(ctx, data, id.String())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (uc *userUseCaseImpl) Find(ctx context.Context, params dtos.QueryParams) (*[]types.User, exceptions.ErrorType) {
