@@ -2,6 +2,7 @@ package use_cases
 
 import (
 	"context"
+	"go-auth-api/internal/application/validators"
 	"go-auth-api/internal/domain/adapters"
 	"go-auth-api/internal/domain/dtos"
 	"go-auth-api/internal/domain/exceptions"
@@ -19,6 +20,17 @@ func CreateUserUseCaseConstructor(userService adapters.UserService) adapters.Cre
 }
 
 func (c createUserUseCaseImpl) Execute(ctx context.Context, user *dtos.UsersDto) (*types.User, exceptions.ErrorType) {
-	//TODO implement me
-	panic("implement me")
+	validationErr := validators.Validate(*user, ctx)
+
+	if validationErr != nil {
+		return nil, validationErr
+	}
+
+	createdUser, err := c.userService.NewUser(ctx, user)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return createdUser, nil
 }

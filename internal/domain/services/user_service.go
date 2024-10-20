@@ -20,8 +20,7 @@ func UserServiceConstructor(userPersistence adapters.UserPersistence) adapters.U
 }
 
 func (u userServiceImpl) NewUser(ctx context.Context, user *dtos.UsersDto) (*types.User, exceptions.ErrorType) {
-	//TODO implement me
-	panic("implement me")
+	return u.userPersistence.Create(ctx, user)
 }
 
 func (u userServiceImpl) UpdateUser(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (*types.User, exceptions.ErrorType) {
