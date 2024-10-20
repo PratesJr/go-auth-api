@@ -24,8 +24,7 @@ func (u userServiceImpl) NewUser(ctx context.Context, user *dtos.UsersDto) (*typ
 }
 
 func (u userServiceImpl) UpdateUser(ctx context.Context, data *dtos.UpdateUserDto, id uuid.UUID) (*types.User, exceptions.ErrorType) {
-	//TODO implement me
-	panic("implement me")
+	return u.userPersistence.Update(ctx, data, id.String())
 }
 
 func (u userServiceImpl) ListUser(ctx context.Context, params dtos.QueryParams) (*[]types.User, exceptions.ErrorType) {
