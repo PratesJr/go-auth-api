@@ -13,12 +13,17 @@ import (
 )
 
 type userController struct {
-	useCase adapters.UserUseCase
+	createUser adapters.CreateUserUseCase
+	updateUser adapters.UpdateUserUseCaseAdapter
 }
 
-func UserControllerConstructor(useCase adapters.UserUseCase) adapters.UsersController {
+func UserControllerConstructor(
+	createUser adapters.CreateUserUseCase,
+	updateUser adapters.UpdateUserUseCaseAdapter,
+) adapters.UsersController {
 	return &userController{
-		useCase: useCase,
+		updateUser: updateUser,
+		createUser: createUser,
 	}
 }
 
@@ -38,7 +43,7 @@ func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	result, errBusiness := c.useCase.Create(ctx, payload)
+	result, errBusiness := c.createUser.Execute(ctx, payload)
 
 	if errBusiness != nil {
 
@@ -84,7 +89,7 @@ func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, errBusiness := c.useCase.Update(ctx, payload, parsedUuid)
+	result, errBusiness := c.updateUser.Execute(ctx, payload, parsedUuid)
 
 	if err != nil {
 		errResponse := parsers.HttpErrorParser(errBusiness, ctx, nil)
@@ -98,6 +103,7 @@ func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
 	render.Status(r, 200)
 	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
+
 func (c *userController) Get(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())

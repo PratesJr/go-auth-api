@@ -7,6 +7,7 @@ import (
 	"go-auth-api/internal/domain/dtos"
 	"go-auth-api/internal/domain/exceptions"
 	"go-auth-api/internal/domain/types"
+	"go-auth-api/internal/utils"
 )
 
 type userServiceImpl struct {
@@ -28,11 +29,35 @@ func (u userServiceImpl) UpdateUser(ctx context.Context, data *dtos.UpdateUserDt
 }
 
 func (u userServiceImpl) ListUser(ctx context.Context, params dtos.QueryParams) (*[]types.User, exceptions.ErrorType) {
-	//TODO implement me
-	panic("implement me")
+	return u.userPersistence.Find(ctx, params)
 }
 
 func (u userServiceImpl) FindUserById(ctx context.Context, id *uuid.UUID) (*types.User, exceptions.ErrorType) {
-	//TODO implement me
-	panic("implement me")
+	params := dtos.QueryParams{
+		Id: utils.ToPointer(id.String()),
+	}
+	users, err := u.userPersistence.Find(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	if len(*users) == 0 {
+
+		// throw not found error
+	}
+
+	var user *types.User
+
+	for _, value := range *users {
+
+		*user = types.User{
+			Id:        value.Id,
+			Name:      value.Name,
+			Email:     value.Email,
+			CreatedAt: value.CreatedAt,
+		}
+
+	}
+
+	return user, nil
+
 }
