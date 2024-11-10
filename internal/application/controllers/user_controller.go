@@ -21,10 +21,12 @@ type userController struct {
 func UserControllerConstructor(
 	createUser adapters.CreateUserUseCase,
 	updateUser adapters.UpdateUserUseCaseAdapter,
+	findUser adapters.FindUserUseCaseAdapter,
 ) adapters.UsersController {
 	return &userController{
 		updateUser: updateUser,
 		createUser: createUser,
+		findUser:   findUser,
 	}
 }
 

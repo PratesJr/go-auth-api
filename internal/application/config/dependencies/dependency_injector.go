@@ -23,6 +23,7 @@ type AppConfiguration struct {
 	userService       adapters.UserService
 	createUserUseCase adapters.CreateUserUseCase
 	updateUserUseCase adapters.UpdateUserUseCaseAdapter
+	findUserUseCase   adapters.FindUserUseCaseAdapter
 	UserController    adapters.UsersController
 }
 
@@ -61,11 +62,16 @@ func (ac *AppConfiguration) InjectDependencies() *AppConfiguration {
 		ac.updateUserUseCase = use_cases.UpdateUserUseCaseConstructor(ac.userService)
 	}
 
+	if ac.findUserUseCase == nil {
+		ac.findUserUseCase = use_cases.FindUserUseCaseConstructor(ac.userService)
+
+	}
 	if ac.UserController == nil {
 
 		ac.UserController = controllers.UserControllerConstructor(
 			ac.createUserUseCase,
 			ac.updateUserUseCase,
+			ac.findUserUseCase,
 		)
 	}
 
