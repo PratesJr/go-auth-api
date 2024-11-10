@@ -15,6 +15,7 @@ import (
 type userController struct {
 	createUser adapters.CreateUserUseCase
 	updateUser adapters.UpdateUserUseCaseAdapter
+	findUser   adapters.FindUserUseCaseAdapter
 }
 
 func UserControllerConstructor(
@@ -104,15 +105,15 @@ func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
 	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
 
-func (c *userController) Get(rw http.ResponseWriter, r *http.Request) {
+func (c *userController) List(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
 
-	var err error
 	var query dtos.QueryParams
 
 	query.BuildQuery(r.URL.Query())
 
+	result, err := c.findUser.ListUser(ctx, query)
 	if err != nil {
 		render.Status(r, 400)
 		render.JSON(rw, r, map[string]string{})
@@ -120,4 +121,12 @@ func (c *userController) Get(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	render.Status(r, 200)
+	render.JSON(rw, r, map[string]interface{}{"data": *result})
+
+}
+
+func (c *userController) FindById(rw http.ResponseWriter, r *http.Request) {
+	//TODO implement me
+	panic("implement me")
 }
