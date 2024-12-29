@@ -73,7 +73,9 @@ func (up *userPersistenceImpl) Update(ctx context.Context, data *dtos.UpdateUser
 	if err != nil {
 		return nil, exceptions.DatabaseException(ctx, err.Error())
 	}
+
 	user := *userArr
+
 	userToUpdate := user[0].UpdateData(*data)
 
 	errUpdate := up.repo.Update(ctx, userToUpdate)

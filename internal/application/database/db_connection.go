@@ -17,11 +17,5 @@ func DbConnection() *gorm.DB {
 		panic("Failed to connect on database")
 	}
 
-	migrationErr := db.AutoMigrate()
-
-	if migrationErr != nil {
-		panic("Failed to create tables")
-	}
-
 	return db
 }

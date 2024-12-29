@@ -63,6 +63,7 @@ func (c *userController) Post(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
+
 	ctx := r.Context()
 	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
 	var err error
@@ -94,7 +95,7 @@ func (c *userController) Put(rw http.ResponseWriter, r *http.Request) {
 
 	result, errBusiness := c.updateUser.Execute(ctx, payload, parsedUuid)
 
-	if err != nil {
+	if errBusiness != nil {
 		errResponse := parsers.HttpErrorParser(errBusiness, ctx, nil)
 
 		render.Status(r, errResponse.StatusCode)
