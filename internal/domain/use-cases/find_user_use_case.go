@@ -26,6 +26,7 @@ func (f findUserUseCaseImpl) ListUser(ctx context.Context, params dtos.QueryPara
 	err = validators.Validate(params, ctx)
 
 	if err != nil {
+
 		return nil, err
 	}
 

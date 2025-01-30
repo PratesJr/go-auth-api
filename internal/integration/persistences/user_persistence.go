@@ -41,7 +41,7 @@ func (up *userPersistenceImpl) Find(ctx context.Context, params dtos.QueryParams
 
 	arrayUser, err := up.repo.Select(ctx, params)
 
-	if arrayUser != nil {
+	if err != nil {
 		return nil, exceptions.DatabaseException(ctx, err.Error())
 	}
 
@@ -53,7 +53,9 @@ func (up *userPersistenceImpl) Find(ctx context.Context, params dtos.QueryParams
 			Id:        utils.ToPointer(value.ID.String()),
 			Name:      &value.Name,
 			Email:     &value.Email,
+			Birth:     utils.ToPointer(value.Birth.String()),
 			CreatedAt: utils.ToPointer(value.CreatedAt.String()),
+			UpdatedAt: utils.ToPointer(value.UpdatedAt.String()),
 		}
 
 	}

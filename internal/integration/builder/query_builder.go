@@ -3,6 +3,7 @@ package builder
 import (
 	"go-auth-api/internal/domain/dtos"
 	"gorm.io/gorm"
+	"strings"
 )
 
 func BuildGormQuery(params dtos.QueryParams) []func(db *gorm.DB) *gorm.DB {
@@ -10,20 +11,19 @@ func BuildGormQuery(params dtos.QueryParams) []func(db *gorm.DB) *gorm.DB {
 
 	if params.Name != nil {
 		query = append(query, func(db *gorm.DB) *gorm.DB {
-			return db.Where("name LIKE ?", *params.Name+"%")
+			return db.Where("name ILIKE ?", "%"+*params.Name+"%")
 		})
-
 	}
 
 	if params.Email != nil {
 		query = append(query, func(db *gorm.DB) *gorm.DB {
-			return db.Where("email = ?", params.Email)
+			return db.Where("email = ?", *params.Email)
 		})
 	}
 
 	if params.Id != nil {
 		query = append(query, func(db *gorm.DB) *gorm.DB {
-			return db.Where("id = ?", params.Id)
+			return db.Where("id = ?", *params.Id)
 		})
 	}
 
@@ -43,7 +43,11 @@ func BuildGormPagination(params dtos.QueryParams) func(db *gorm.DB) *gorm.DB {
 			limit = *params.Limit
 		}
 		if params.OrderBy != nil {
-			orderBy = *params.OrderBy
+			if strings.Contains(strings.ToLower(*params.OrderBy), "desc") {
+				orderBy = *params.OrderBy
+			} else {
+				orderBy = *params.OrderBy + " ASC"
+			}
 		}
 
 		return db.
