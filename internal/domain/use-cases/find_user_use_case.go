@@ -35,6 +35,11 @@ func (f findUserUseCaseImpl) ListUser(ctx context.Context, params dtos.QueryPara
 }
 
 func (f findUserUseCaseImpl) FindUser(ctx context.Context, id uuid.UUID) (*types.User, exceptions.ErrorType) {
-	//TODO implement me
-	panic("implement me")
+	user, err := f.userService.FindUserById(ctx, &id)
+
+	if user == nil {
+		return nil, exceptions.NotFoundException(ctx, "User not found for id: "+id.String())
+	}
+
+	return user, err
 }

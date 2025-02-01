@@ -160,6 +160,32 @@ func (c *userController) List(rw http.ResponseWriter, r *http.Request) {
 }
 
 func (c *userController) FindById(rw http.ResponseWriter, r *http.Request) {
-	//TODO implement me
-	panic("implement me")
+	ctx := r.Context()
+	ctx = context.WithValue(ctx, "request_id", uuid.New().String())
+
+	id := chi.URLParam(r, "id")
+	userId, err := uuid.Parse(id)
+	if err != nil {
+		errResponse := parsers.HttpErrorParser(nil, ctx, err)
+
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
+
+		return
+	}
+
+	result, errBusiness := c.findUser.FindUser(ctx, userId)
+
+	if errBusiness != nil {
+
+		errResponse := parsers.HttpErrorParser(errBusiness, ctx, nil)
+
+		render.Status(r, errResponse.StatusCode)
+		render.JSON(rw, r, map[string]exceptions.HttpException{"error": errResponse})
+
+		return
+	}
+
+	render.Status(r, 201)
+	render.JSON(rw, r, map[string]interface{}{"data": *result})
 }
