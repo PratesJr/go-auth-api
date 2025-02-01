@@ -8,13 +8,13 @@ import (
 )
 
 type UsersModel struct {
-	ID        uuid.UUID `gorm:"type: uuid; not null; primaryKey"`
-	Name      string    `gorm:"type: varchar(100); not null"`
-	Email     string    `gorm:"type: varchar(100); not null"`
-	Birth     time.Time `gorm:"type: date; not null"`
-	Password  string    `gorm:"type: varchar; not null"`
-	CreatedAt time.Time `gorm:"type: timestamp; not null"`
-	UpdatedAt time.Time `gorm:"type: timestamp; not null"`
+	ID        uuid.UUID `gorm:"type:uuid; not null; primaryKey" json:"id"`
+	Name      string    `gorm:"type:varchar(100); not null" json:"name"`
+	Email     string    `gorm:"type:varchar(100); not null" json:"email"`
+	Birth     time.Time `gorm:"type:date; not null" json:"birth"`
+	Password  string    `gorm:"type:varchar; not null" json:"password"`
+	CreatedAt time.Time `gorm:"type:timestamp; not null" json:"created_at"`
+	UpdatedAt time.Time `gorm:"type:timestamp; not null" json:"updated_at"`
 }
 
 func (UsersModel) TableName() string {
