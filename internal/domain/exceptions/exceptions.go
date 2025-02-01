@@ -61,3 +61,17 @@ func DatabaseException(ctx context.Context, errMessage string) ErrorType {
 	}
 	return &ex
 }
+
+func NotFoundException(ctx context.Context, errMessage string) ErrorType {
+	id := config.GetRequestId(ctx)
+
+	ex := errorType{
+		id:          id,
+		statusCode:  enums.StatusCode.NotFound,
+		code:        "404_NOT_FOUND",
+		details:     nil,
+		description: "Data Not Found.",
+		message:     errMessage,
+	}
+	return &ex
+}

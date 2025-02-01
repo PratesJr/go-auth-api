@@ -37,12 +37,10 @@ func (u userServiceImpl) FindUserById(ctx context.Context, id *uuid.UUID) (*type
 		Id: utils.ToPointer(id.String()),
 	}
 	users, err := u.userPersistence.Find(ctx, params)
-	if err != nil {
-		return nil, err
-	}
+
 	if len(*users) == 0 {
 
-		// throw not found error
+		return nil, nil
 	}
 
 	var user *types.User
@@ -58,6 +56,6 @@ func (u userServiceImpl) FindUserById(ctx context.Context, id *uuid.UUID) (*type
 
 	}
 
-	return user, nil
+	return user, err
 
 }
